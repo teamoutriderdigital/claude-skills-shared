@@ -18,7 +18,7 @@ Clone this repo directly into your Claude Code skills directory:
 
 ```bash
 # Mac/Linux
-git clone https://github.com/YOUR_ORG/claude-skills-shared.git ~/.claude/skills-shared
+git clone https://github.com/teamoutriderdigital/claude-skills-shared.git ~/.claude/skills-shared
 
 # Then symlink each skill into your skills folder:
 ln -s ~/.claude/skills-shared/create-content-brain ~/.claude/skills/create-content-brain
@@ -30,7 +30,7 @@ ln -s ~/.claude/skills-shared/local-seo-audit ~/.claude/skills/local-seo-audit
 
 ```powershell
 # Windows (PowerShell as Administrator)
-git clone https://github.com/YOUR_ORG/claude-skills-shared.git "$env:USERPROFILE\.claude\skills-shared"
+git clone https://github.com/teamoutriderdigital/claude-skills-shared.git "$env:USERPROFILE\.claude\skills-shared"
 
 # Then symlink each skill:
 $src = "$env:USERPROFILE\.claude\skills-shared"
