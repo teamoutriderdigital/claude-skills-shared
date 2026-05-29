@@ -255,7 +255,7 @@ The requirements file lists all keywords in lowercase. Always capitalize proper 
 
 ### Rule 5: Word Count Compliance
 
-Stay within +/-10% of the target word count approved in Phase 2. If the approved target is 1200 words, your output must be between 1,080 and 1,320 words.
+Stay within +/-5% of the target word count approved in Phase 2.
 
 ### Rule 6: Heading Optimization (H1 and H2)
 
@@ -305,7 +305,7 @@ Output at the very top of the content (before H1):
 
 ### Rule 10: No Bold Formatting on Keywords
 
-Never bold keywords in the body text. Write them as normal text. Bold is reserved for key service terms, material names, and critical differentiators on first mention only, per Content Brain rules.
+Never bold keywords in the body text. Write them as normal text. 
 
 ### Rule 11: Readability Level
 
@@ -395,7 +395,7 @@ else:
    - For MISSING keywords: insert naturally into existing sentences
    - After edits, re-run the Python compliance check
 3. **Repeat up to 3 total passes.** If issues remain after 3 passes, show the remaining issues and ask the user for guidance.
-4. Also verify the word count is within +/-10% of the target on each pass.
+4. Also verify the word count is within +/-5% of the target on each pass.
 
 Also check extended keyword coverage on the final pass:
 
@@ -531,7 +531,7 @@ Print a summary:
 1. **Content Brain is the #1 authority.** All voice, positioning, and terminology rules from `Content brain/contentbrain.md` override everything else, including NeuronWriter keyword suggestions.
 2. **This is CREATION, not optimization.** You are writing from scratch. There is no "original content" to preserve. But you ARE following a template page's STRUCTURE.
 3. **Never compromise readability for keyword density.** Natural language always wins. If a keyword cannot be inserted without awkwardness, skip it.
-4. **Word count discipline.** Stay within +/-10% of the approved target. Do not inflate content with filler.
+4. **Word count discipline.** Stay within +/-5% of the approved target. Do not inflate content with filler.
 5. **Substring awareness is critical.** Every compound keyword also increments all its parent keyword counts. Track this as you write.
 6. **Python verification is mandatory.** Never rely on internal counting. Always run the Python script to verify compliance.
 7. **Proper nouns are always capitalized** regardless of how they appear in the requirements data.
