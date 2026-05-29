@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  icon: string;
+  large?: boolean;
+}
+
+const { title, description, icon, large = false } = Astro.props;
+---
+
+<div class:list={["card-accent bg-white rounded-lg border border-gray-100 group hover:shadow-lg transition-all duration-300", large ? "p-8" : "p-6"]}>
+  <div class="w-10 h-10 rounded-lg bg-brand-primary/10 flex items-center justify-center mb-5 group-hover:bg-brand-primary/20 transition-colors">
+    <Fragment set:html={icon} />
+  </div>
+  <h3 class:list={["font-heading text-dark mb-3 group-hover:text-brand-primary transition-colors duration-200", large ? "text-xl" : "text-lg"]}>
+    {title}
+  </h3>
+  <p class:list={["text-dark-light/80 leading-relaxed", large ? "text-[15px]" : "text-sm"]}>
+    {description}
+  </p>
+</div>

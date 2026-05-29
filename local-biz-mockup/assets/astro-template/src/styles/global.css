@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* CUSTOMIZE: Replace these color values with the business's brand palette */
+@theme {
+  --color-brand-primary: #D4942B;
+  --color-brand-primary-dark: #B87A1E;
+  --color-brand-primary-light: #E8A84A;
+  --color-brand-secondary: #2D7A3A;
+  --color-brand-secondary-dark: #1E5C2A;
+  --color-dark: #1C1C1C;
+  --color-dark-light: #3A3A3A;
+  --color-light-bg: #F2F0ED;
+  --color-highlight-bg: #F5E6CC;
+  --color-alert: #E86F2A;
+  --color-muted: #8C8C84;
+  --color-whatsapp: #25D366;
+
+  /* CUSTOMIZE: Replace with appropriate Google Fonts */
+  --font-heading: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-dark-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+}
+
+/* Scroll-triggered fade-in */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in-up:nth-child(2) { transition-delay: 0.08s; }
+.fade-in-up:nth-child(3) { transition-delay: 0.16s; }
+.fade-in-up:nth-child(4) { transition-delay: 0.24s; }
+.fade-in-up:nth-child(5) { transition-delay: 0.32s; }
+.fade-in-up:nth-child(6) { transition-delay: 0.40s; }
+
+/* Hero grain texture */
+.hero-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Button hover lift */
+.btn-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.btn-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.25);
+}
+
+/* Gold accent top border */
+.gold-accent-top {
+  position: relative;
+}
+.gold-accent-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-light), var(--color-brand-primary));
+}
+
+/* Card hover accent border */
+.card-accent {
+  position: relative;
+  overflow: hidden;
+}
+.card-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-brand-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.card-accent:hover::before {
+  transform: scaleX(1);
+}

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local SEO Audit Report - Smith Bros Mobile Detailing</title>
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-light: #243447;
+    --navy-dark: #0f1923;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --red: #ef4444;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --amber: #f59e0b;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+    --green: #10b981;
+    --green-bg: #ecfdf5;
+    --green-border: #a7f3d0;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .report-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .report-header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .report-header .subtitle { font-size: 1.2rem; opacity: 0.85; margin-bottom: 0.3rem; }
+  .report-header .date { font-size: 0.95rem; opacity: 0.6; }
+
+  /* Navigation */
+  .toc {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .toc a {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    margin-right: 0.25rem;
+    color: var(--gray-600);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .toc a:hover { background: var(--gray-100); color: var(--navy); }
+
+  /* Main Content */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* Section Styling */
+  .section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid var(--gray-200);
+  }
+  .section h2 {
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section h3 {
+    font-size: 1.15rem;
+    color: var(--navy-light);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .section h4 {
+    font-size: 1rem;
+    color: var(--gray-700);
+    margin: 1.25rem 0 0.5rem;
+  }
+  .section p { margin-bottom: 0.75rem; color: var(--gray-700); }
+  .section ul, .section ol { margin: 0.5rem 0 1rem 1.5rem; color: var(--gray-700); }
+  .section li { margin-bottom: 0.4rem; }
+  .section strong { color: var(--gray-900); }
+
+  /* Executive Summary Cards */
+  .exec-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .issue-card {
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    border-left: 5px solid;
+  }
+  .issue-card.critical { background: var(--red-bg); border-color: var(--red); }
+  .issue-card.warning { background: var(--amber-bg); border-color: var(--amber); }
+  .issue-card.info { background: #eff6ff; border-color: var(--accent); }
+  .issue-card .issue-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+  .issue-card .issue-title .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    color: white;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .badge-critical { background: var(--red); }
+  .badge-warning { background: var(--amber); }
+  .badge-info { background: var(--accent); }
+  .badge-good { background: var(--green); }
+  .issue-card p { font-size: 0.92rem; color: var(--gray-600); margin: 0; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  thead th {
+    background: var(--navy);
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--gray-50); }
+  tbody tr:hover { background: #f0f4ff; }
+  .cell-red { color: var(--red); font-weight: 700; }
+  .cell-amber { color: var(--amber); font-weight: 700; }
+  .cell-green { color: var(--green); font-weight: 700; }
+  .cell-bold { font-weight: 700; color: var(--gray-900); }
+
+  /* Score Gauges */
+  .score-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0; }
+  .score-card {
+    flex: 1;
+    min-width: 140px;
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .score-card .score-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .score-card .score-label {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+  .score-red { color: var(--red); border-color: var(--red-border); }
+  .score-amber { color: var(--amber); border-color: var(--amber-border); }
+  .score-green { color: var(--green); border-color: var(--green-border); }
+
+  /* Screenshot Cards */
+  .screenshot-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .screenshot-card img {
+    width: 100%;
+    display: block;
+  }
+  .screenshot-card .caption {
+    padding: 0.75rem 1rem;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    font-style: italic;
+  }
+
+  /* Side-by-side screenshots */
+  .screenshot-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 768px) {
+    .screenshot-compare { grid-template-columns: 1fr; }
+  }
+
+  /* Key Takeaway Box */
+  .takeaway {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+  }
+  .takeaway strong { color: #93c5fd; }
+
+  /* Impact Box */
+  .impact-box {
+    background: var(--red-bg);
+    border: 1px solid var(--red-border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+  }
+
+  /* Recommendation Box */
+  .rec-box {
+    background: var(--green-bg);
+    border: 1px solid var(--green-border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+  }
+
+  /* Stat highlight row */
+  .stat-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+  .stat-item {
+    flex: 1;
+    min-width: 200px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat-item .stat-value { font-size: 2rem; font-weight: 800; color: var(--navy); }
+  .stat-item .stat-label { font-size: 0.82rem; color: var(--gray-500); margin-top: 0.25rem; }
+
+  /* Roadmap Timeline */
+  .timeline { margin: 1.5rem 0; }
+  .timeline-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .timeline-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .timeline-content {
+    flex: 1;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .timeline-content h4 { margin: 0 0 0.5rem; color: var(--navy); }
+  .timeline-content ul { margin: 0; padding-left: 1.25rem; }
+  .timeline-content li { font-size: 0.9rem; color: var(--gray-600); margin-bottom: 0.25rem; }
+
+  /* Footer */
+  .report-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-400);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 2rem;
+  }
+
+  /* Print */
+  @media print {
+    .toc { display: none; }
+    .section { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    .report-header { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="report-header">
+  <h1>Local SEO & Google Maps Audit Report</h1>
+  <div class="subtitle">Smith Bros Mobile Detailing &mdash; sbmobiledetailing.com</div>
+  <div class="date">Audit Date: May 14, 2026</div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="toc">
+  <a href="#exec">Executive Summary</a>
+  <a href="#s1">Google Maps</a>
+  <a href="#s2">GBP Audit</a>
+  <a href="#s3">Technical SEO</a>
+  <a href="#s3a">Page Speed</a>
+  <a href="#s3b">Ahrefs Audit</a>
+  <a href="#s4">Competitors</a>
+  <a href="#s5">Action Plan</a>
+  <a href="#s6">90-Day Roadmap</a>
+  <a href="#s7">Quick Reference</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- EXECUTIVE SUMMARY -->
+<!-- ============================================================ -->
+<div class="section" id="exec">
+  <h2>Executive Summary</h2>
+  <p>Smith Bros Mobile Detailing has a strong reputation (5.0 stars, 545 combined Google reviews across 3 listings, 481 Yelp reviews) and a well-built website with 30+ location pages per service. However, they are <strong>critically underperforming in Google Maps</strong> &mdash; the primary traffic driver for local service businesses.</p>
+
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-value">545</div><div class="stat-label">Google Reviews (split across 3 listings)</div></div>
+    <div class="stat-item"><div class="stat-value">2/8</div><div class="stat-label">Local Pack Appearances</div></div>
+    <div class="stat-item"><div class="stat-value">48/100</div><div class="stat-label">Ahrefs Health Score</div></div>
+  </div>
+
+  <h3>The 3 Biggest Issues Found</h3>
+
+  <div class="exec-grid">
+    <div class="issue-card critical">
+      <div class="issue-title">1. Three Duplicate GBP Listings <span class="badge badge-critical">CRITICAL</span></div>
+      <p>Smith Bros has THREE separate Google Business Profile listings splitting 545 reviews and confusing Google:</p>
+      <ul style="margin-top:0.5rem;font-size:0.92rem;">
+        <li><strong>Listing A (Storefront):</strong> 233 reviews, has physical address, active Google Posts &mdash; this is the well-managed primary listing that appears in local pack</li>
+        <li><strong>Listing B (Service Area):</strong> 275 reviews, NO physical address, also active &mdash; but <strong>cannot appear in local pack</strong> because it has no address</li>
+        <li><strong>Listing C (Abandoned):</strong> 37 reviews, NO physical address, 3-4 year old reviews &mdash; dead weight</li>
+      </ul>
+      <p style="margin-top:0.5rem;"><strong>The three-way review split is the core problem.</strong> 545 reviews on ONE listing would make Smith Bros the highest-reviewed mobile detailer in North County.</p>
+    </div>
+
+    <div class="issue-card warning">
+      <div class="issue-title">2. Duplicate Listings Diluting Authority <span class="badge badge-warning">HIGH</span></div>
+      <p>While Listing A is well-optimized with secondary categories, business description, and services populated, the existence of two additional duplicate listings (B and C) is splitting 545 reviews three ways and may be confusing Google's algorithms about which listing to surface in local pack results.</p>
+    </div>
+
+    <div class="issue-card info">
+      <div class="issue-title">3. No Website Schema Markup <span class="badge badge-info">HIGH</span></div>
+      <p>The website has zero structured data (JSON-LD). Competitors have comprehensive LocalBusiness, AggregateRating, FAQPage, and Service schemas that help them appear in rich results.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: GOOGLE MAPS -->
+<!-- ============================================================ -->
+<div class="section" id="s1">
+  <h2>Section 1: Google Maps / Local Pack Performance</h2>
+
+  <h3>1.1 Current Local Pack Rankings</h3>
+  <p>Smith Bros was tested across 8 high-value keyword searches from relevant locations:</p>
+
+  <table>
+    <thead><tr><th>Keyword</th><th>Local Pack Position</th><th>Top 3 Winners</th></tr></thead>
+    <tbody>
+      <tr><td>"mobile detailing san diego"</td><td class="cell-red">Not showing</td><td>Fresh Layer (261), DetailBroski (92), Blueberry (437)</td></tr>
+      <tr><td>"ceramic coating san diego"</td><td class="cell-red">Not showing</td><td>Fresh Layer (261), Excellence Auto (358), SD Auto Style (547)</td></tr>
+      <tr><td>"window tinting san marcos ca"</td><td class="cell-red">Not showing</td><td>Luxury Image (237), Tint World (205), M1 Tint (157)</td></tr>
+      <tr><td>"ceramic coating carlsbad ca"</td><td class="cell-red">Not showing</td><td>Ceramic Pro Elite (46), Shine Division (253), Expert Mobile (70)</td></tr>
+      <tr><td>"mobile detailing escondido ca"</td><td class="cell-red">Not showing</td><td>Cali Mobile Detail (176), True Care (76), Mt Mobile (19)</td></tr>
+      <tr><td>"mobile detailing oceanside ca"</td><td class="cell-red">Not showing</td><td>Rodriguez's (78), Marco's (381), Stiles (14)</td></tr>
+      <tr><td>"mobile detailing san marcos ca"</td><td class="cell-amber">#2</td><td>San Marcos Mobile Detailing (14), <strong>Smith Bros (233)</strong>, Prestige (73)</td></tr>
+      <tr><td>"auto detailing near me" (San Marcos)</td><td class="cell-amber">#2</td><td>Apex Mobile (17), <strong>Smith Bros (233)</strong>, Prestige (73)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="screenshot-card">
+    <img src="only the weaker profile is shown in maps.png" alt="Google Maps showing Smith Bros at #2 with 233 reviews, beaten by competitor with only 17 reviews">
+    <div class="caption">Google Maps search for "Mobile Detailing san marcos" &mdash; Smith Bros appears at #2 (233 reviews) behind a competitor with just 17 reviews. The stronger listings (275 and 37 reviews) cannot appear because they lack a physical address.</div>
+  </div>
+
+  <div class="takeaway">
+    <strong>Key Takeaway:</strong> Smith Bros appears in the local pack for ONLY 2 out of 8 searches &mdash; and even then, only at #2. A business with just 14 reviews outranks them for "mobile detailing san marcos ca" despite Smith Bros having 233 reviews on that listing. The problem is NOT reputation &mdash; it's the three-way listing split.
+  </div>
+
+  <h3>1.2 Organic Search Rankings</h3>
+  <p>Smith Bros' location pages do rank in organic results (below the local pack), proving the website strategy works &mdash; but Google Maps is where 42% of local clicks go.</p>
+
+  <table>
+    <thead><tr><th>Keyword</th><th>Organic Position</th></tr></thead>
+    <tbody>
+      <tr><td>"mobile detailing escondido ca"</td><td class="cell-green"><strong>#1</strong> (below local pack)</td></tr>
+      <tr><td>"mobile detailing oceanside ca"</td><td class="cell-green"><strong>#3</strong> (below local pack)</td></tr>
+      <tr><td>"auto detailing near me san marcos"</td><td class="cell-green"><strong>#3</strong></td></tr>
+      <tr><td>"mobile detailing san marcos ca"</td><td class="cell-amber">#9</td></tr>
+      <tr><td>"mobile detailing san diego"</td><td class="cell-red">Not in top 20</td></tr>
+      <tr><td>"ceramic coating san diego"</td><td class="cell-red">Not in top 20</td></tr>
+    </tbody>
+  </table>
+
+  <div class="screenshot-card">
+    <img src="ranking in organic but not in maps.png" alt="Google search showing Smith Bros ranking organically for Oceanside but not in the local pack">
+    <div class="caption">Search for "mobile detailing oceanside ca" &mdash; Smith Bros is NOT in the local pack (Rodriguez's, Marco's, Louie's shown instead) but IS ranking in organic results below (circled in red). This pattern repeats across most North County searches.</div>
+  </div>
+
+  <h3>1.3 Geographic Reality</h3>
+  <p>Smith Bros is located in <strong>San Marcos</strong> (~30 miles from downtown San Diego). Google Maps heavily weights <strong>proximity</strong> to the searcher. This means:</p>
+  <ul>
+    <li>Smith Bros <strong>cannot realistically compete</strong> in the local pack for broad "san diego" keywords against businesses located in central San Diego</li>
+    <li>Smith Bros <strong>should dominate</strong> North County: San Marcos, Escondido, Vista, Oceanside, Carlsbad, Encinitas, Poway, Rancho Bernardo, Del Mar</li>
+    <li>The fact that they don't appear in ANY North County local packs (except barely in San Marcos) indicates the duplicate listing issue is severely hurting them</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: GBP AUDIT -->
+<!-- ============================================================ -->
+<div class="section" id="s2">
+  <h2>Section 2: Google Business Profile Audit</h2>
+
+  <h3>2.1 CRITICAL FINDING: Three Separate GBP Listings</h3>
+  <p>Smith Bros has <strong>THREE distinct GBP listings</strong> that are actively working against each other:</p>
+
+  <div class="screenshot-card">
+    <img src="3 profiles.png" alt="Three separate Google Business Profile listings for Smith Bros Mobile Detailing">
+    <div class="caption">All three Smith Bros GBP listings visible in Google Maps search results &mdash; splitting 545 reviews across three profiles. Same phone number (+1 760-310-1532) on all three.</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Element</th><th>Listing A (Storefront)</th><th>Listing B (Service Area)</th><th>Listing C (Abandoned)</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-bold">Name</td><td>Smith Bros Mobile Detailing</td><td>Smith Bros Mobile Detailing, Ceramic, Tint, & PPF</td><td>Smith Bros Mobile Detailing</td></tr>
+      <tr><td class="cell-bold">Reviews</td><td>233</td><td>275</td><td>37</td></tr>
+      <tr><td class="cell-bold">Rating</td><td class="cell-green">5.0</td><td class="cell-green">5.0</td><td class="cell-green">5.0</td></tr>
+      <tr><td class="cell-bold">Address</td><td class="cell-green">1335 Descanso Ave, San Marcos</td><td class="cell-red">None (service area)</td><td class="cell-red">None</td></tr>
+      <tr><td class="cell-bold">Category</td><td>Car detailing + secondary categories</td><td>Car detailing service</td><td>Car detailing service</td></tr>
+      <tr><td class="cell-bold">Google Posts</td><td class="cell-green">Active (11 hrs ago)</td><td class="cell-green">Active (2 days ago)</td><td class="cell-red">None</td></tr>
+      <tr><td class="cell-bold">Review Responses</td><td class="cell-green">Yes, owner responds</td><td class="cell-green">Yes, owner responds</td><td class="cell-red">None</td></tr>
+      <tr><td class="cell-bold">Photos/Videos</td><td class="cell-green">Active (14 days ago)</td><td class="cell-green">Active</td><td class="cell-amber">By owner only</td></tr>
+      <tr><td class="cell-bold">Local Pack</td><td class="cell-green">Yes (#2 San Marcos)</td><td class="cell-red">Cannot rank (no address)</td><td class="cell-red">Cannot rank</td></tr>
+      <tr><td class="cell-bold">Hours</td><td>Open 24 hours</td><td>Open 24 hours</td><td>Closed &middot; Opens 7 AM</td></tr>
+      <tr><td class="cell-bold">Review Age</td><td>Recent (2-4 months)</td><td>Recent</td><td class="cell-red">3-4 years old</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Key Observations:</strong></p>
+  <ul>
+    <li><strong>Listing A is well-managed</strong> &mdash; active Google Posts (11 hours ago with a detailed PPF post), owner review responses, secondary categories, business description, populated services, and recent photos.</li>
+    <li><strong>Listing B is also active</strong> &mdash; it duplicates engagement efforts on a listing that has NO physical address and <strong>cannot appear in local pack results</strong>.</li>
+    <li><strong>Listing C is abandoned</strong> &mdash; 37 old reviews (3-4 years), no responses, no posts. Pure dead weight.</li>
+  </ul>
+
+  <p><strong>Combined reviews: 233 + 275 + 37 = 545</strong></p>
+
+  <div class="rec-box">
+    <strong>Recommended Action &mdash; MERGE ALL THREE LISTINGS:</strong>
+    <ol style="margin-top:0.5rem;">
+      <li>Contact Google Business Profile support to initiate a three-way merge</li>
+      <li>The surviving listing MUST retain the <strong>physical address</strong> (1335 Descanso Ave) from Listing A</li>
+      <li>Goal: ONE listing with all 545 reviews, the physical address, and all engagement activity</li>
+      <li>Request deletion/merger of Listing C immediately (abandoned, only 37 old reviews)</li>
+      <li>This single fix could be the most impactful local SEO action &mdash; a listing with 545 reviews at 5.0 stars would dominate North County</li>
+    </ol>
+  </div>
+
+  <h3>2.2 Listing A Details (Storefront &mdash; the primary listing)</h3>
+  <ul>
+    <li><strong>Secondary categories:</strong> Present (confirmed by client)</li>
+    <li><strong>Business description:</strong> Present</li>
+    <li><strong>Services section:</strong> Populated with services</li>
+    <li><strong>Google Posts:</strong> Active &mdash; latest post 11 hours ago (detailed PPF/paint correction content with Book CTA)</li>
+    <li><strong>Review responses:</strong> Owner responds with personalized, keyword-rich replies (most recent: 2 months ago)</li>
+    <li><strong>Photos:</strong> Active &mdash; latest uploaded 14 days ago, includes Videos, Exterior, By owner, Street View sections</li>
+    <li><strong>Popular times:</strong> Data showing (Wednesdays pattern visible)</li>
+    <li><strong>Attributes:</strong> Appointment required, On-site services, Credit/Debit cards, LGBTQ+ friendly, Wheelchair accessible</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: TECHNICAL SEO -->
+<!-- ============================================================ -->
+<div class="section" id="s3">
+  <h2>Section 3: Website Technical SEO Audit</h2>
+
+  <h3>3.1 Schema Markup Assessment</h3>
+  <p>Google's Rich Results Test confirms <strong>zero structured data</strong> on Smith Bros' website, while competitor Fresh Layer has 5 schema types detected:</p>
+
+  <div class="screenshot-compare">
+    <div class="screenshot-card">
+      <img src="our schema.png" alt="Google Rich Results Test showing no items detected for sbmobiledetailing.com">
+      <div class="caption"><strong>Smith Bros</strong> &mdash; "No items detected." Zero rich results / structured data.</div>
+    </div>
+    <div class="screenshot-card">
+      <img src="fresh layer schema.png" alt="Google Rich Results Test showing 5 schema types for fresh-layer.com">
+      <div class="caption"><strong>Fresh Layer (Competitor)</strong> &mdash; 5 schema types: Product snippets, FAQ, Local businesses, Organization, Review snippets.</div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Schema Type</th><th>Smith Bros</th><th>Fresh Layer</th></tr></thead>
+    <tbody>
+      <tr><td>LocalBusiness</td><td class="cell-red">Missing</td><td class="cell-green">Comprehensive</td></tr>
+      <tr><td>AutoDetailing/AutoWash</td><td class="cell-red">Missing</td><td class="cell-green">Present</td></tr>
+      <tr><td>AggregateRating</td><td class="cell-red">Missing</td><td class="cell-green">Present (366 reviews)</td></tr>
+      <tr><td>FAQPage</td><td class="cell-red">Missing</td><td class="cell-green">Present</td></tr>
+      <tr><td>Service</td><td class="cell-red">Missing</td><td class="cell-green">Present with service area</td></tr>
+      <tr><td>BreadcrumbList</td><td class="cell-red">Missing</td><td class="cell-green">Present</td></tr>
+      <tr><td>Review</td><td class="cell-red">Missing</td><td class="cell-green">Present</td></tr>
+      <tr><td>GeoCoordinates</td><td class="cell-red">Missing</td><td class="cell-green">Present</td></tr>
+      <tr><td>Service Area Polygon</td><td class="cell-red">Missing</td><td class="cell-green">80km radius</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 On-Page SEO (Ceramic Coating Page Sample)</h3>
+  <table>
+    <thead><tr><th>Element</th><th>Assessment</th></tr></thead>
+    <tbody>
+      <tr><td>Title Tag</td><td>"Ceramic Coating | Mobile Detailing in San Diego County | Smith Bros" &mdash; OK but could be more specific</td></tr>
+      <tr><td>H1</td><td class="cell-green">"Mobile Ceramic Coating Services San Diego" &mdash; Good</td></tr>
+      <tr><td>Content Depth</td><td class="cell-green">~2,500+ words &mdash; Excellent</td></tr>
+      <tr><td>Pricing</td><td class="cell-green">Transparent pricing ($599&ndash;$1,699) &mdash; Excellent</td></tr>
+      <tr><td>FAQ Section</td><td class="cell-amber">5 questions with answers &mdash; Good (but needs FAQPage schema)</td></tr>
+      <tr><td>Testimonials</td><td class="cell-green">15+ customer testimonials &mdash; Good</td></tr>
+      <tr><td>Image Alt Text</td><td class="cell-red">Poor &mdash; Generic filenames, missing descriptive alt text</td></tr>
+      <tr><td>Map Embed</td><td class="cell-red">Not visible</td></tr>
+      <tr><td>Breadcrumbs</td><td class="cell-red">Missing</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Location Pages</h3>
+  <p>Smith Bros has 30+ location pages per service type. The Escondido page ranks #1 organically for "mobile detailing escondido ca".</p>
+  <p><strong>Areas to improve:</strong></p>
+  <ul>
+    <li>Add unique content per location (local landmarks, neighborhoods, local testimonials)</li>
+    <li>Add embedded Google Maps per location page</li>
+    <li>Add LocalBusiness schema with service area on each page</li>
+    <li>Ensure FAQs are location-specific</li>
+    <li>Add internal links between related service+location pages</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3A: PAGE PERFORMANCE -->
+<!-- ============================================================ -->
+<div class="section" id="s3a">
+  <h2>Section 3A: Page Performance & Core Web Vitals</h2>
+  <p>Google uses page speed as a ranking factor. Smith Bros' homepage was tested via Google PageSpeed Insights on May 14, 2026.</p>
+
+  <div class="screenshot-card">
+    <img src="page speed CWV scores.png" alt="PageSpeed Insights showing CWV Failed, Performance 54/100">
+    <div class="caption">Google PageSpeed Insights report for sbmobiledetailing.com &mdash; Core Web Vitals Assessment: FAILED. Performance score: 54/100. Accessibility, Best Practices, and SEO all score 100/100.</div>
+  </div>
+
+  <h3>Core Web Vitals Assessment: <span style="color:var(--red)">FAILED</span></h3>
+  <p>Real user data from the Chrome UX Report (28-day period, mobile devices):</p>
+
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th><th>Status</th><th>Threshold</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-bold">Largest Contentful Paint (LCP)</td><td>2.5s</td><td class="cell-amber">Needs Improvement</td><td>Good &lt; 2.5s, Poor &gt; 4.0s</td></tr>
+      <tr><td class="cell-bold">Interaction to Next Paint (INP)</td><td>N/A</td><td>&mdash;</td><td>No data available</td></tr>
+      <tr><td class="cell-bold">Cumulative Layout Shift (CLS)</td><td>0</td><td class="cell-green">Good</td><td>Good &lt; 0.1</td></tr>
+      <tr><td class="cell-bold">First Contentful Paint (FCP)</td><td>2.5s</td><td class="cell-amber">Needs Improvement</td><td>Good &lt; 1.8s</td></tr>
+      <tr><td class="cell-bold">Time to First Byte (TTFB)</td><td>2.1s</td><td class="cell-red">Poor</td><td>Good &lt; 0.8s</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Lighthouse Lab Scores</h3>
+  <div class="score-row">
+    <div class="score-card score-amber"><div class="score-value">54</div><div class="score-label">Performance</div></div>
+    <div class="score-card score-green"><div class="score-value">100</div><div class="score-label">Accessibility</div></div>
+    <div class="score-card score-green"><div class="score-value">100</div><div class="score-label">Best Practices</div></div>
+    <div class="score-card score-green"><div class="score-value">100</div><div class="score-label">SEO</div></div>
+  </div>
+
+  <h3>Lab Metrics Detail</h3>
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th><th>Severity</th></tr></thead>
+    <tbody>
+      <tr><td>First Contentful Paint (FCP)</td><td>3.5s</td><td class="cell-red">Poor</td></tr>
+      <tr><td class="cell-bold">Largest Contentful Paint (LCP)</td><td class="cell-bold">6.6s</td><td class="cell-red">Poor</td></tr>
+      <tr><td>Total Blocking Time (TBT)</td><td>370ms</td><td class="cell-amber">Needs Improvement</td></tr>
+      <tr><td>Cumulative Layout Shift (CLS)</td><td>0.02</td><td class="cell-green">Good</td></tr>
+      <tr><td class="cell-bold">Speed Index</td><td class="cell-bold">7.6s</td><td class="cell-red">Poor</td></tr>
+    </tbody>
+  </table>
+
+  <div class="impact-box">
+    <strong>Impact on Local SEO:</strong> LCP of 6.6s is nearly 3x Google's "good" threshold (2.5s). TTFB of 2.1s suggests server/hosting issues. Competitors with faster sites get a ranking edge.
+  </div>
+
+  <h3>Recommended Fixes</h3>
+  <table>
+    <thead><tr><th>Priority</th><th>Fix</th><th>Expected Impact</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-critical" style="font-size:0.75rem">HIGH</span></td><td><strong>Improve server response time (TTFB)</strong> &mdash; Evaluate hosting; consider CDN, server-side caching, or migration</td><td>Addresses root cause</td></tr>
+      <tr><td><span class="badge badge-critical" style="font-size:0.75rem">HIGH</span></td><td><strong>Optimize LCP element</strong> &mdash; Compress hero images, use WebP/AVIF, preload critical assets</td><td>Biggest visual improvement</td></tr>
+      <tr><td><span class="badge badge-warning" style="font-size:0.75rem">MED</span></td><td><strong>Reduce Total Blocking Time</strong> &mdash; Defer non-critical JS, minimize third-party scripts</td><td>Improves interactivity</td></tr>
+      <tr><td><span class="badge badge-warning" style="font-size:0.75rem">MED</span></td><td><strong>Reduce Speed Index</strong> &mdash; Eliminate render-blocking CSS/JS, inline critical CSS</td><td>Faster perceived load</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3B: AHREFS AUDIT -->
+<!-- ============================================================ -->
+<div class="section" id="s3b">
+  <h2>Section 3B: Ahrefs Technical Site Audit</h2>
+  <p>An Ahrefs Site Audit was run on May 14, 2026, crawling the full sbmobiledetailing.com domain.</p>
+
+  <div class="screenshot-card">
+    <img src="ahrefs technical site audit.png" alt="Ahrefs Site Audit showing Health Score 48, 405 errors, 424 warnings">
+    <div class="caption">Ahrefs Site Audit overview &mdash; Health Score: 48/100 (Fair). 1,281 total issues found across 423 internal URLs. 52% of crawled URLs have errors.</div>
+  </div>
+
+  <h3>Site Health Overview</h3>
+  <div class="score-row">
+    <div class="score-card score-amber"><div class="score-value">48</div><div class="score-label">Health Score (out of 100)</div></div>
+    <div class="score-card" style="border-color:var(--gray-300)"><div class="score-value" style="color:var(--gray-700)">423</div><div class="score-label">Internal URLs Crawled</div></div>
+    <div class="score-card score-red"><div class="score-value">52%</div><div class="score-label">URLs with Errors</div></div>
+  </div>
+
+  <h3>Issues Distribution</h3>
+  <table>
+    <thead><tr><th>Issue Type</th><th>Count</th><th>Severity</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-bold">Errors</td><td class="cell-red">405</td><td class="cell-red">Critical &mdash; must fix</td></tr>
+      <tr><td class="cell-bold">Warnings</td><td class="cell-amber">424</td><td class="cell-amber">Important &mdash; should fix</td></tr>
+      <tr><td>Notices</td><td>452</td><td>Low &mdash; nice to fix</td></tr>
+      <tr><td class="cell-bold">Total Issues</td><td class="cell-bold">1,281</td><td>&mdash;</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Top Critical Issues</h3>
+  <table>
+    <thead><tr><th>Issue</th><th>Affected Pages</th><th>Impact</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-bold">Canonical points to redirect</td><td class="cell-red">213</td><td>Google receives conflicting signals about which URL is the "real" page. May ignore canonical or deindex pages entirely.</td></tr>
+      <tr><td class="cell-bold">Non-canonical page in sitemap</td><td class="cell-red">183</td><td>Sitemap says "index this page" but canonical says "index that page instead." Wastes crawl budget.</td></tr>
+      <tr><td class="cell-bold">3XX page receives organic traffic</td><td class="cell-amber">8</td><td>Pages receiving organic traffic are redirecting. Causes slower loads and link equity loss.</td></tr>
+      <tr><td>Page has no outgoing links</td><td>1</td><td>Dead-end page &mdash; bad for crawlability.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="impact-box">
+    <strong>Impact on Local SEO:</strong> Nearly 400 pages (213 + 183) have conflicting canonical and redirect signals. Google may be struggling to determine which version of each page to index, which dilutes ranking signals across location pages.
+  </div>
+
+  <h3>Recommended Fixes</h3>
+  <table>
+    <thead><tr><th>Priority</th><th>Fix</th><th>Pages</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-critical" style="font-size:0.75rem">CRITICAL</span></td><td><strong>Fix canonical-to-redirect chains</strong> &mdash; Ensure every canonical points to the final, non-redirecting URL</td><td>213</td></tr>
+      <tr><td><span class="badge badge-critical" style="font-size:0.75rem">CRITICAL</span></td><td><strong>Clean up sitemap</strong> &mdash; Remove non-canonical URLs; only include canonical 200-status pages</td><td>183</td></tr>
+      <tr><td><span class="badge badge-warning" style="font-size:0.75rem">HIGH</span></td><td><strong>Fix 3XX pages with organic traffic</strong> &mdash; Serve content directly or update internal links</td><td>8</td></tr>
+      <tr><td><span class="badge badge-warning" style="font-size:0.75rem">MED</span></td><td><strong>Review robots.txt</strong> &mdash; Ensure 633 blocked URLs are intentionally blocked</td><td>633</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Health Score Target</h3>
+  <table>
+    <thead><tr><th>Metric</th><th>Current</th><th>90-Day Target</th></tr></thead>
+    <tbody>
+      <tr><td>Health Score</td><td class="cell-red">48/100</td><td class="cell-green">80+/100</td></tr>
+      <tr><td>Errors</td><td class="cell-red">405</td><td class="cell-green">&lt; 50</td></tr>
+      <tr><td>Warnings</td><td class="cell-amber">424</td><td class="cell-green">&lt; 100</td></tr>
+      <tr><td>CWV Assessment</td><td class="cell-red">Failed</td><td class="cell-green">Passed</td></tr>
+      <tr><td>Performance Score</td><td class="cell-amber">54/100</td><td class="cell-green">75+/100</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: COMPETITORS -->
+<!-- ============================================================ -->
+<div class="section" id="s4">
+  <h2>Section 4: Competitive Benchmarking</h2>
+
+  <h4>A. Primary Competitors</h4>
+  <table>
+    <thead><tr><th>Competitor</th><th>Location</th><th>Google Reviews</th><th>Rating</th><th>GBP Listings</th><th>Organic KW</th><th>ETV/mo</th><th>Key Strengths</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-bold">Smith Bros</td><td>San Marcos</td><td class="cell-bold">545 (3 listings)</td><td class="cell-green">5.0</td><td class="cell-red">3</td><td>429</td><td>$900</td><td>Review volume, 30+ yr history, transparent pricing</td></tr>
+      <tr><td class="cell-bold">Official CA Detailing</td><td>Sorrento Valley</td><td class="cell-bold">558</td><td class="cell-green">5.0</td><td class="cell-green">1</td><td class="cell-bold">851</td><td class="cell-bold">$3,184</td><td>Highest single-listing reviews, 2x keyword footprint</td></tr>
+      <tr><td class="cell-bold">Fresh Layer</td><td>Downtown SD</td><td>261</td><td>4.9</td><td class="cell-green">1</td><td>5,451</td><td class="cell-bold">$7,188</td><td>Highest ETV, daily posts, comprehensive schema</td></tr>
+      <tr><td class="cell-bold">SD Select</td><td>La Jolla</td><td class="cell-bold">561 (2 listings)</td><td>4.9/5.0</td><td class="cell-amber">2</td><td>776</td><td>$1,158</td><td>13K+ Instagram, brand pages, membership pricing</td></tr>
+      <tr><td class="cell-bold">Dennis Auto Details</td><td>Escondido</td><td>341 (2 listings)</td><td class="cell-green">5.0</td><td class="cell-amber">2</td><td>865</td><td>$2,156</td><td>Winning PAA boxes, blog strategy</td></tr>
+      <tr><td class="cell-bold">Blueberry Detailing</td><td>La Jolla</td><td class="cell-bold">437</td><td class="cell-green">5.0</td><td class="cell-green">1</td><td>N/A</td><td>N/A</td><td>Highest single-listing 5.0 at scale</td></tr>
+      <tr><td class="cell-bold">SD Auto Style</td><td>Downtown SD</td><td class="cell-bold">547</td><td>4.9</td><td class="cell-green">1</td><td>N/A</td><td>N/A</td><td>In local pack for ceramic coating SD</td></tr>
+      <tr><td class="cell-bold">Excellence Auto</td><td>National City</td><td>358</td><td>4.9</td><td class="cell-green">1</td><td>N/A</td><td>N/A</td><td>In local pack for ceramic coating SD</td></tr>
+    </tbody>
+  </table>
+
+  <h4>B. North County Competitors (Smith Bros' Home Territory)</h4>
+  <table>
+    <thead><tr><th>Competitor</th><th>Location</th><th>Reviews</th><th>Rating</th><th>Services</th><th>Key Threat</th></tr></thead>
+    <tbody>
+      <tr><td>Prestige Detail SD</td><td>San Marcos</td><td>73</td><td>5.0</td><td>Detailing, Ceramic</td><td>In local pack for San Marcos</td></tr>
+      <tr><td>San Marcos Mobile Detailing</td><td>San Marcos</td><td>14</td><td>5.0</td><td>Detailing</td><td>Beats Smith Bros at #1 despite 14 reviews</td></tr>
+      <tr><td>Apex Mobile</td><td>San Marcos</td><td>17</td><td>5.0</td><td>Detailing</td><td>Beats Smith Bros at #1 in "near me"</td></tr>
+      <tr><td>Luxury Image</td><td>San Marcos</td><td>237</td><td>5.0</td><td>Window Tinting</td><td>#1 for "window tinting san marcos"</td></tr>
+      <tr><td>Tint World</td><td>San Marcos</td><td>205</td><td>4.5</td><td>Tinting, Detailing</td><td>National franchise, #2 tinting</td></tr>
+      <tr><td>M1 Window Tint</td><td>San Marcos</td><td>157</td><td>5.0</td><td>Window Tinting</td><td>#3 for window tinting</td></tr>
+      <tr><td>Shine Division</td><td>Oceanside</td><td>253</td><td>5.0</td><td>Detailing, Ceramic</td><td>#2 for ceramic coating Carlsbad</td></tr>
+      <tr><td>Marco's Mobile</td><td>Oceanside</td><td class="cell-bold">381</td><td>5.0</td><td>Detailing</td><td>#2 for Oceanside detailing</td></tr>
+      <tr><td>Cali Mobile Detail</td><td>Escondido</td><td>176</td><td>5.0</td><td>Detailing</td><td>#1 for Escondido detailing</td></tr>
+      <tr><td>Rodriguez's Mobile</td><td>Oceanside</td><td>78</td><td>5.0</td><td>Detailing</td><td>#1 for Oceanside detailing</td></tr>
+      <tr><td>Ceramic Pro Elite</td><td>Carlsbad</td><td>46</td><td>4.7</td><td>Ceramic, PPF, Tint</td><td>#1 for ceramic Carlsbad &mdash; brand authority</td></tr>
+    </tbody>
+  </table>
+
+  <div class="takeaway">
+    <strong>Key Insight:</strong> If Smith Bros' 3 listings were merged into one with 545 reviews, they would rank <strong>#2 in total review count</strong> across the entire San Diego detailing market (behind SD Select's 561). Combined with their perfect 5.0 rating and 30+ year history, a merged listing would be extremely competitive for North County keywords.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: ACTION PLAN -->
+<!-- ============================================================ -->
+<div class="section" id="s5">
+  <h2>Section 5: Prioritized Action Plan</h2>
+
+  <h3>Critical Priority <span class="badge badge-critical">DO THIS WEEK</span></h3>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Impact</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>MERGE ALL 3 GBP LISTINGS INTO ONE</strong> &mdash; Consolidate via Google Business Profile support. Retain physical address from Listing A. Target: 545 reviews on one listing.</td><td class="cell-red">CRITICAL</td><td>Medium</td></tr>
+      <tr><td>2</td><td><strong>Request deletion of Listing C</strong> (abandoned, 37 old reviews) via "Suggest an edit" or GBP support</td><td class="cell-red">HIGH</td><td>Low</td></tr>
+      <tr><td>3</td><td><strong>Fix GBP website URL</strong> to https://www.sbmobiledetailing.com</td><td class="cell-amber">MED</td><td>Low</td></tr>
+      <tr><td>4</td><td><strong>Verify service areas in GBP</strong> &mdash; Ensure all North County cities are listed</td><td class="cell-red">HIGH</td><td>Low</td></tr>
+    </tbody>
+  </table>
+
+  <h3>High Priority <span class="badge badge-warning">WITHIN 30 DAYS</span></h3>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Impact</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td><strong>Implement LocalBusiness + FAQPage schema</strong> on key pages</td><td class="cell-red">HIGH</td><td>High</td></tr>
+      <tr><td>6</td><td><strong>Fix canonical-to-redirect chains</strong> (213 pages) and clean up sitemap (183 pages)</td><td class="cell-red">HIGH</td><td>High</td></tr>
+      <tr><td>7</td><td><strong>Improve TTFB / page speed</strong> &mdash; Evaluate hosting, add CDN, optimize images</td><td class="cell-red">HIGH</td><td>High</td></tr>
+      <tr><td>8</td><td><strong>Fix image alt text</strong> across the site</td><td class="cell-amber">MED</td><td>Medium</td></tr>
+      <tr><td>9</td><td><strong>Strategic North County keyword focus</strong> &mdash; Optimize for Escondido, Carlsbad, Oceanside, Vista, Encinitas</td><td class="cell-red">HIGH</td><td>High</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Medium Priority <span class="badge badge-info">30-60 DAYS</span></h3>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Impact</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td><strong>Launch a blog</strong> targeting People Also Ask queries</td><td class="cell-red">HIGH</td><td>Ongoing</td></tr>
+      <tr><td>11</td><td><strong>Enhance location pages</strong> with unique content, embedded maps, local FAQs</td><td class="cell-amber">MED-HIGH</td><td>High</td></tr>
+      <tr><td>12</td><td><strong>Build/audit citations</strong> across 20+ directories</td><td class="cell-amber">MED</td><td>Medium</td></tr>
+      <tr><td>13</td><td><strong>Add certification badges</strong> &mdash; IDA, brand-authorized installer logos</td><td class="cell-amber">MED</td><td>Low</td></tr>
+      <tr><td>14</td><td><strong>Expand car brand pages</strong> (Mercedes, Audi, Range Rover) with before/after photos</td><td class="cell-amber">MED</td><td>Medium</td></tr>
+      <tr><td>15</td><td><strong>Add interactive before/after gallery</strong></td><td class="cell-amber">MED</td><td>Medium</td></tr>
+      <tr><td>16</td><td><strong>Implement multi-channel tracking</strong> &mdash; GA4 + Facebook Pixel</td><td class="cell-amber">MED</td><td>Medium</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Ongoing <span class="badge badge-good">MONTHLY</span></h3>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Frequency</th></tr></thead>
+    <tbody>
+      <tr><td>17</td><td>Review generation campaign (5+ new reviews/week)</td><td>Weekly</td></tr>
+      <tr><td>18</td><td>Google Posts (before/after, offers, seasonal)</td><td>2-3x/week</td></tr>
+      <tr><td>19</td><td>Blog content targeting local + informational queries</td><td>2-4 posts/month</td></tr>
+      <tr><td>20</td><td>Social media growth (Instagram reels, before/after)</td><td>Daily</td></tr>
+      <tr><td>21</td><td>Monitor local pack rankings for top 20 keywords</td><td>Weekly</td></tr>
+      <tr><td>22</td><td>Respond to all new reviews within 24 hours</td><td>Daily</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: 90-DAY ROADMAP -->
+<!-- ============================================================ -->
+<div class="section" id="s6">
+  <h2>Section 6: 90-Day Roadmap</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot">1-2</div>
+      <div class="timeline-content">
+        <h4>Weeks 1-2: Foundation Fixes</h4>
+        <ul>
+          <li>Initiate GBP listing merge (all 3 &rarr; 1)</li>
+          <li>Request deletion of Listing C</li>
+          <li>Fix GBP website URL</li>
+          <li>Verify service areas in GBP</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot">3-4</div>
+      <div class="timeline-content">
+        <h4>Weeks 3-4: Technical SEO</h4>
+        <ul>
+          <li>Fix canonical/redirect chains (213 pages) &amp; clean sitemap (183 pages)</li>
+          <li>Implement schema markup on homepage + top 5 service pages</li>
+          <li>Fix image alt text site-wide</li>
+          <li>Address TTFB / hosting performance</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot">5-8</div>
+      <div class="timeline-content">
+        <h4>Weeks 5-8: Content & Expansion</h4>
+        <ul>
+          <li>Launch blog with first 4 PAA-targeting posts</li>
+          <li>Enhance 10 priority location pages</li>
+          <li>Complete citation audit and submissions</li>
+          <li>Add certification badges</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot">9-12</div>
+      <div class="timeline-content">
+        <h4>Weeks 9-12: Growth & Optimization</h4>
+        <ul>
+          <li>Expand car brand pages</li>
+          <li>Implement before/after gallery</li>
+          <li>Set up tracking and remarketing</li>
+          <li>Measure progress against baseline metrics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>Success Metrics</h3>
+  <table>
+    <thead><tr><th>Metric</th><th>Current (May 2026)</th><th>90-Day Target</th></tr></thead>
+    <tbody>
+      <tr><td>Local Pack appearances (8 keywords)</td><td class="cell-red">2/8</td><td class="cell-green">5/8</td></tr>
+      <tr><td>#1 Local Pack positions</td><td class="cell-red">0</td><td class="cell-green">2+</td></tr>
+      <tr><td>Organic top-10 keywords</td><td class="cell-amber">62</td><td class="cell-green">100+</td></tr>
+      <tr><td>Monthly traffic value</td><td class="cell-amber">$900</td><td class="cell-green">$2,000+</td></tr>
+      <tr><td>Ahrefs Health Score</td><td class="cell-red">48/100</td><td class="cell-green">80+/100</td></tr>
+      <tr><td>CWV Performance Score</td><td class="cell-amber">54/100</td><td class="cell-green">75+/100</td></tr>
+      <tr><td>Schema types implemented</td><td class="cell-red">0</td><td class="cell-green">5+</td></tr>
+      <tr><td>GBP Listings</td><td class="cell-red">3 (split)</td><td class="cell-green">1 (merged, 545 reviews)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: QUICK REFERENCE -->
+<!-- ============================================================ -->
+<div class="section" id="s7">
+  <h2>Section 7: Quick Reference</h2>
+
+  <h3>What Smith Bros Does Well</h3>
+  <ul>
+    <li>Perfect 5.0 Google rating across 545 combined reviews (rare at this volume)</li>
+    <li>Active Google Posts on Listing A (posted 11 hours ago &mdash; detailed PPF content with Book CTA)</li>
+    <li>Owner actively responds to reviews with personalized, location-specific responses</li>
+    <li>30+ location pages per service type (strong website foundation)</li>
+    <li>Transparent pricing on service pages (ceramic coating $599&ndash;$1,699)</li>
+    <li>Wide service range (detailing, ceramic, tint, PPF, RV, boat, motorcycle, fleet)</li>
+    <li>30+ years in business (trust signal)</li>
+    <li>Car brand specialty pages already started</li>
+    <li>FAQ content on service pages</li>
+    <li>Accessibility, Best Practices, SEO scores all 100/100</li>
+  </ul>
+
+  <h3>What Needs to Change</h3>
+  <ul>
+    <li><strong>MERGE DUPLICATE LISTINGS</strong> &mdash; 312 reviews are stuck on Listings B and C that can't rank in local pack. Merging creates a 545-review powerhouse.</li>
+    <li><strong>Add website schema markup</strong> &mdash; Zero structured data vs Fresh Layer's 5 schema types</li>
+    <li><strong>Fix technical SEO</strong> &mdash; Health Score 48/100 with 396 canonical/redirect issues</li>
+    <li><strong>Improve page speed</strong> &mdash; CWV Failed, Performance 54/100, TTFB 2.1s</li>
+    <li><strong>Launch a blog</strong> &mdash; Dennis Auto Details is winning People Also Ask boxes</li>
+    <li><strong>Match Official CA Detailing on keyword volume</strong> &mdash; They have 2x the organic footprint in overlapping territory</li>
+    <li><strong>Learn from SD Select</strong> &mdash; Brand-specific landing pages, membership pricing, 13K Instagram</li>
+  </ul>
+</div>
+
+</div><!-- /container -->
+
+<div class="report-footer">
+  Report generated using DataForSEO SERP API, SEMrush, Ahrefs, Google PageSpeed Insights, Google Rich Results Test, Google Maps live inspection, and website analysis.<br>
+  All ranking data reflects San Diego, CA market as of May 14, 2026.
+</div>
+
+</body>
+</html>

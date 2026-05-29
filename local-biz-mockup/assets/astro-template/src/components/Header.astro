@@ -1,0 +1,80 @@
+---
+interface Props {
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+
+/* CUSTOMIZE: Update nav links for the business's pages */
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-dark/95 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-24">
+      <a href="/" class="flex-shrink-0">
+        <!-- CUSTOMIZE: Update logo path and alt text -->
+        <img src="/images/logo.png" alt="BUSINESS_NAME" class="h-[83px] w-auto" />
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8">
+        {navLinks.map(link => (
+          <a
+            href={link.href}
+            class:list={[
+              "relative text-sm font-semibold uppercase tracking-wider transition-colors duration-200 py-1",
+              currentPath === link.href ? "text-brand-primary" : "text-white/90 hover:text-brand-primary"
+            ]}
+          >
+            {link.label}
+            {currentPath === link.href && (
+              <span class="absolute -bottom-1 left-0 right-0 h-0.5 bg-brand-primary rounded-full"></span>
+            )}
+          </a>
+        ))}
+        <a href="/contact" class="btn-lift ml-4 inline-flex items-center px-6 py-2.5 bg-brand-primary hover:bg-brand-primary-dark text-white text-xs font-bold uppercase tracking-widest rounded-full">
+          Free Estimate
+        </a>
+      </nav>
+
+      <button id="mobile-menu-btn" class="md:hidden text-white p-2 relative z-50" aria-label="Toggle navigation menu">
+        <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden bg-dark border-t border-white/10">
+    <div class="px-6 py-6 space-y-1">
+      {navLinks.map(link => (
+        <a href={link.href} class:list={["block text-base font-semibold uppercase tracking-wider py-3 border-b border-white/5", currentPath === link.href ? "text-brand-primary" : "text-white/80 hover:text-brand-primary"]}>
+          {link.label}
+        </a>
+      ))}
+      <a href="/contact" class="btn-lift block text-center mt-6 px-5 py-3.5 bg-brand-primary hover:bg-brand-primary-dark text-white font-bold uppercase tracking-wider rounded-full">
+        Free Estimate
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="h-24"></div>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const hamburger = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+    hamburger?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+  });
+</script>

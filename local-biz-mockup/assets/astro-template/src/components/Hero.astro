@@ -1,0 +1,58 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  image: string;
+  compact?: boolean;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  badges?: string[];
+}
+
+const { title, subtitle, image, compact = false, primaryCta, secondaryCta, badges } = Astro.props;
+---
+
+<section class:list={["relative overflow-hidden hero-grain", compact ? "py-24 md:py-32" : "py-28 md:py-40 lg:py-48"]}>
+  <div class="absolute inset-0">
+    <img src={image} alt="" class="w-full h-full object-cover" loading="eager" />
+    <div class="absolute inset-0 bg-gradient-to-br from-dark/85 via-dark/70 to-dark/50"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class:list={[compact ? "max-w-3xl mx-auto text-center" : "max-w-3xl"]}>
+      <h1 class:list={["font-heading leading-tight", compact ? "text-3xl md:text-5xl" : "text-4xl md:text-5xl lg:text-6xl"]} style="color: #fff;">
+        {title}
+      </h1>
+      <p class:list={["text-gray-300 mt-5 leading-relaxed", compact ? "text-base md:text-lg" : "text-lg md:text-xl max-w-2xl"]}>
+        {subtitle}
+      </p>
+
+      {badges && badges.length > 0 && (
+        <div class="flex flex-wrap gap-3 mt-6">
+          {badges.map(badge => (
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-white/10 text-white/90 border border-white/15 backdrop-blur-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
+              {badge}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {(primaryCta || secondaryCta) && (
+        <div class:list={["mt-9 flex flex-col sm:flex-row gap-4", compact ? "items-center justify-center" : "items-start"]}>
+          {primaryCta && (
+            <a href={primaryCta.href} class="btn-lift inline-flex items-center px-8 py-4 bg-brand-primary hover:bg-brand-primary-dark text-white text-sm font-bold uppercase tracking-wider rounded-full">
+              {primaryCta.label}
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          )}
+          {secondaryCta && (
+            <a href={secondaryCta.href} class="btn-lift inline-flex items-center px-8 py-4 border-2 border-white/40 hover:border-white hover:bg-white/10 text-white text-sm font-bold uppercase tracking-wider rounded-full backdrop-blur-sm">
+              {secondaryCta.label}
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

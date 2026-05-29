@@ -1,0 +1,22 @@
+---
+/* CUSTOMIZE: Update stats for the business */
+const stats = [
+  { value: 'XX+', label: 'Years Experience' },
+  { value: 'XX+', label: 'Projects Completed' },
+  { value: 'XX%', label: 'Key Metric' },
+  { value: '0', label: 'Complaints' },
+];
+---
+
+<section class="bg-dark py-10 border-t border-brand-primary/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {stats.map((stat, i) => (
+        <div class:list={["text-center fade-in-up", i < stats.length - 1 && "md:border-r md:border-white/10"]}>
+          <div class="text-brand-primary font-heading text-3xl lg:text-4xl mb-1.5">{stat.value}</div>
+          <div class="text-white/50 text-[11px] uppercase tracking-[0.2em] font-semibold">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+<!-- CUSTOMIZE: Update form fields, labels, and options for the business -->
+<form class="space-y-5" onsubmit="event.preventDefault()">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
+      <label for="name" class="block text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Full Name <span class="text-brand-primary">*</span></label>
+      <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-light-bg border-0 rounded-lg focus:ring-2 focus:ring-brand-primary/40 outline-none transition text-sm placeholder:text-muted" placeholder="John Smith" />
+    </div>
+    <div>
+      <label for="company" class="block text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Company</label>
+      <input type="text" id="company" name="company" class="w-full px-4 py-3 bg-light-bg border-0 rounded-lg focus:ring-2 focus:ring-brand-primary/40 outline-none transition text-sm placeholder:text-muted" placeholder="Company Name" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
+      <label for="email" class="block text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Email <span class="text-brand-primary">*</span></label>
+      <input type="email" id="email" name="email" required class="w-full px-4 py-3 bg-light-bg border-0 rounded-lg focus:ring-2 focus:ring-brand-primary/40 outline-none transition text-sm placeholder:text-muted" placeholder="john@company.com" />
+    </div>
+    <div>
+      <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Phone <span class="text-brand-primary">*</span></label>
+      <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 bg-light-bg border-0 rounded-lg focus:ring-2 focus:ring-brand-primary/40 outline-none transition text-sm placeholder:text-muted" placeholder="(555) 555-0123" />
+    </div>
+  </div>
+
+  <div>
+    <label for="details" class="block text-xs font-bold uppercase tracking-wider text-dark/70 mb-2">Project Details</label>
+    <textarea id="details" name="details" rows="4" class="w-full px-4 py-3 bg-light-bg border-0 rounded-lg focus:ring-2 focus:ring-brand-primary/40 outline-none transition text-sm resize-y placeholder:text-muted" placeholder="Tell us about your project..."></textarea>
+  </div>
+
+  <button type="submit" class="btn-lift w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-brand-primary hover:bg-brand-primary-dark text-white font-bold uppercase tracking-wider rounded-full text-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    Request Free Estimate
+  </button>
+
+  <p class="text-xs text-muted">We respond to all inquiries within 48 hours.</p>
+</form>
