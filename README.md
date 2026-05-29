@@ -11,6 +11,7 @@ Shared Claude Code skills for the team.
 | `/optimize-service-page` | Optimize an existing service page for SEO and keyword compliance |
 | `/local-biz-mockup` | Generate a full mockup website for a local business |
 | `/local-seo-audit` | Comprehensive local SEO and Google Maps audit with HTML report |
+| `/fetch-internal-urls` | Crawl a website's XML sitemap and extract all internal page URLs into a CSV |
 
 ## Installation
 
@@ -26,6 +27,7 @@ ln -s ~/.claude/skills-shared/create-service-page-b2b ~/.claude/skills/create-se
 ln -s ~/.claude/skills-shared/optimize-service-page ~/.claude/skills/optimize-service-page
 ln -s ~/.claude/skills-shared/local-biz-mockup ~/.claude/skills/local-biz-mockup
 ln -s ~/.claude/skills-shared/local-seo-audit ~/.claude/skills/local-seo-audit
+ln -s ~/.claude/skills-shared/fetch-internal-urls ~/.claude/skills/fetch-internal-urls
 ```
 
 ```powershell
@@ -40,6 +42,7 @@ New-Item -ItemType Junction -Path "$dst\create-service-page-b2b" -Target "$src\c
 New-Item -ItemType Junction -Path "$dst\optimize-service-page"   -Target "$src\optimize-service-page"
 New-Item -ItemType Junction -Path "$dst\local-biz-mockup"        -Target "$src\local-biz-mockup"
 New-Item -ItemType Junction -Path "$dst\local-seo-audit"         -Target "$src\local-seo-audit"
+New-Item -ItemType Junction -Path "$dst\fetch-internal-urls"     -Target "$src\fetch-internal-urls"
 ```
 
 ## Updating
