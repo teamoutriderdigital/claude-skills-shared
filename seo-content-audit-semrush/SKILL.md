@@ -56,8 +56,10 @@ Ask the user to export these files from SEMrush and save them to the current wor
 > 4. **Keyword Gap** — Keyword Gap tool (client vs top 3-5 competitors) > Export all
 > 5. **Competitor Keywords** (3-5 files) — Organic Research > Positions > Export for each top competitor
 > 6. **Authority Comparison Screenshot** — Compare Domains tool > screenshot showing Authority Score, Backlinks, Ref. Domains for all domains (save as PNG/JPG)
+> 7. **Internal URLs CSV** — A CSV with all published page URLs on the client website (one URL per line). Can be generated from the sitemap using `/fetch-internal-urls`, or exported from Screaming Frog, or manually compiled. Name it `internal_urls.csv`.
 >
 > The keyword gap export is the most important file — it contains the core opportunity data.
+> The internal URLs file is important because SEMrush often doesn't index all pages — the client may already have pages targeting gap keywords that simply aren't ranking yet.
 
 Wait for the user to confirm files are ready before proceeding.
 
@@ -77,6 +79,7 @@ SEMrush CSV exports follow recognizable naming patterns:
 - Client competitors: contains client domain and `Competitors`
 - Keyword gap: starts with `gap.keywords` or contains `gap`
 - Competitor positions: contains a competitor domain and `organic.Positions`
+- Internal URLs: named `internal_urls.csv` or contains `internal` — a simple CSV with one URL per line
 
 Read the first 3 lines of each CSV to verify column headers match expected SEMrush formats:
 
@@ -86,8 +89,11 @@ Read the first 3 lines of each CSV to verify column headers match expected SEMru
 | Client Pages | URL, Traffic (%), Number of Keywords, Traffic, Traffic Change, Answer Engines, Top Keyword |
 | Client Competitors | Domain, Competitor Relevance, Common Keywords, Organic Keywords, Organic Traffic |
 | Keyword Gap | Keyword, Intents, Volume, Keyword Difficulty, CPC, [domain columns with positions] |
+| Internal URLs | Single column of URLs (one per line), or a URL column among others |
 
 Report what was found and ask the user to confirm the file mapping. This matters because misclassified files will produce incorrect analysis.
+
+**Internal URLs validation:** Count total URLs found. Compare against the number of unique URLs in the Client Pages SEMrush export. If the internal URLs file has significantly more pages (e.g., 500 internal vs 200 in SEMrush), that gap represents pages SEMrush hasn't indexed — these are important for the "hidden pages" analysis in Phase 4.
 
 ## Phase 3: Authority Context Extraction
 
@@ -128,6 +134,7 @@ Launch all 4 agents simultaneously using `run_in_background: true`. Each agent r
 
 **Prompt the agent with:**
 - Client keywords CSV path and client pages CSV path
+- Internal URLs CSV path
 - The client domain name
 - Instructions to use Python (via Bash) for CSV processing
 
@@ -142,6 +149,7 @@ Launch all 4 agents simultaneously using `run_in_background: true`. Each agent r
 7. **Underperforming Pages**: pages with high keyword count (>10) but low traffic — optimization candidates
 8. **Quick Wins**: keywords in positions 4-20 with volume > 100 — close to page 1
 9. **AI/Answer Engine Visibility**: pages appearing in Answer Engines or with LLM Prompts > 0
+10. **Indexation Gap**: Compare internal URLs against SEMrush Pages export. Identify pages that exist on the site but are NOT appearing in SEMrush data. Count: total internal URLs, URLs in SEMrush, URLs missing from SEMrush. Categorize missing URLs by type (blog posts, service pages, location pages, etc.) based on URL path patterns. These are pages that exist but have zero organic visibility — they may need technical SEO fixes (noindex, canonicalization, thin content) or content improvements to start ranking.
 
 ### Agent 2 — Competitor Landscape
 
@@ -199,6 +207,7 @@ Do NOT truncate keyword tables — include every qualifying keyword. Comprehensi
 
 **Prompt the agent with:**
 - Client pages CSV path
+- Internal URLs CSV path
 - Keyword gap CSV path (already filtered by Agent 3's rules)
 - All competitor keyword CSV paths
 - Page type classification rules from `${CLAUDE_SKILL_DIR}/references/page-type-classification.md`
@@ -208,7 +217,8 @@ Do NOT truncate keyword tables — include every qualifying keyword. Comprehensi
 **`analysis/04-content-gap-analysis.md`:**
 - Client's current content map (categorize URLs by type, show traffic per category)
 - Competitor URL pattern analysis (what pages do they have that the client doesn't)
-- New pages needed (with target keywords, volume, KD)
+- **Hidden Pages Analysis**: Cross-reference gap keywords against ALL internal URLs (not just SEMrush pages). For each gap keyword, check if the client already has a published page that could target it by matching URL slugs and path segments against keyword terms. For example, if the gap keyword is "motorcycle shipping" and the client has `/motorcycle-transport-services/` in their internal URLs but it doesn't appear in SEMrush — that page exists but isn't ranking. These are high-priority optimization targets because the page already exists; it just needs SEO improvement (better content, internal links, technical fixes) rather than being created from scratch. Flag these as "EXISTING PAGE - NOT RANKING" in the recommendations.
+- New pages needed (with target keywords, volume, KD) — only recommend creating new pages for keywords where NO matching internal URL exists
 - Existing pages to optimize (with additional keywords they could target)
 - Content consolidation opportunities (duplicate/competing pages)
 
@@ -231,9 +241,11 @@ The report must be **action-first** — organized by what to do, not by what's w
    - Specific action to take (CREATE, OPTIMIZE, CONSOLIDATE)
    - Top keywords table sorted by attainability with competitor positions
    - Existing client pages to fix (if applicable)
+   - For keywords matched to hidden pages (exist on site but not in SEMrush): flag as "PAGE EXISTS - NOT RANKING" with the matching internal URL
    - Reference to full keyword list in analysis/05 file
-5. **Content Consolidation Fixes** — cannibalization issues to resolve
-6. **30/60/90-Day Action Plan** — specific page actions with target volumes
+5. **Hidden Pages Report** — Pages found in internal URLs but absent from SEMrush, matched to gap keywords they could target. This is a high-ROI section because these pages already exist and just need optimization, not creation.
+6. **Content Consolidation Fixes** — cannibalization issues to resolve
+7. **30/60/90-Day Action Plan** — specific page actions with target volumes. Hidden pages that match gap keywords should be prioritized in Days 1-30 since they require optimization, not creation.
 
 ## Phase 6: HTML Report Generation
 
@@ -312,8 +324,9 @@ https://growtharchon.github.io/client-reports/{folder-name}/
 ## Output Checklist
 
 Before finishing, verify:
-- [ ] All CSV files correctly identified and classified
+- [ ] All CSV files correctly identified and classified (including internal URLs)
 - [ ] Authority scores extracted from screenshot
+- [ ] Internal URLs cross-referenced against SEMrush pages and gap keywords
 - [ ] 4 analysis files generated in analysis/ folder
 - [ ] Opportunities-by-page-type file has ALL qualifying keywords (not truncated)
 - [ ] Navigational/brand keywords filtered out
