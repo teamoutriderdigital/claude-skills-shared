@@ -1,0 +1,296 @@
+<!--
+  SEO Content Audit Report Template
+  Use this CSS and HTML structure as the design reference when generating reports.
+  Replace all {PLACEHOLDER} values with actual data.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Content Audit - {CLIENT_DOMAIN}</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #334155;
+    --border: #475569;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+    --pink: #f472b6;
+    --cyan: #22d3ee;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .container { max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e1b4b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 0;
+  }
+  .header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.25rem;
+  }
+  .header .subtitle { font-size: 1.1rem; color: var(--text-muted); }
+  .meta-row { display: flex; gap: 2rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .meta-item { font-size: 0.85rem; color: var(--text-muted); }
+  .meta-item strong { color: var(--text); }
+
+  /* Sections */
+  section { margin-top: 3rem; }
+  section h2 {
+    font-size: 1.5rem; font-weight: 700; color: var(--accent);
+    margin-bottom: 0.5rem; padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--surface2);
+  }
+  section h3 { font-size: 1.15rem; font-weight: 600; color: var(--text); margin-top: 1.75rem; margin-bottom: 0.75rem; }
+  section h4 { font-size: 1rem; font-weight: 600; color: var(--accent2); margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  p, .note { color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem; }
+  p strong { color: var(--text); }
+  .note {
+    background: var(--surface); border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem; border-radius: 0 6px 6px 0; font-size: 0.9rem;
+  }
+  .note.warn { border-left-color: var(--yellow); }
+
+  /* KPI Cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+  .kpi { background: var(--surface); border: 1px solid var(--surface2); border-radius: 10px; padding: 1.25rem; text-align: center; }
+  .kpi .value { font-size: 1.75rem; font-weight: 800; color: var(--accent); }
+  .kpi .value.red { color: var(--red); }
+  .kpi .value.green { color: var(--green); }
+  .kpi .label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 1rem 0; border-radius: 8px; border: 1px solid var(--surface2); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  thead th {
+    background: var(--surface2); color: var(--text); font-weight: 600;
+    padding: 0.6rem 0.75rem; text-align: left; white-space: nowrap;
+    position: sticky; top: 0;
+  }
+  tbody td { padding: 0.5rem 0.75rem; border-top: 1px solid rgba(71,85,105,0.4); color: var(--text-muted); }
+  tbody tr:hover { background: rgba(56,189,248,0.04); }
+  tbody tr:nth-child(even) { background: rgba(30,41,59,0.5); }
+  td.kw { color: var(--text); font-weight: 500; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.score.high { color: var(--green); font-weight: 700; text-align: right; }
+  td.score.med { color: var(--yellow); font-weight: 700; text-align: right; }
+  td.score.low { color: var(--orange); font-weight: 700; text-align: right; }
+  td.pos.top10 { color: var(--green); font-weight: 600; text-align: center; }
+  td.pos.top20 { color: var(--cyan); text-align: center; }
+  td.pos.top50 { color: var(--text-muted); text-align: center; }
+  td.pos.none { color: var(--surface2); text-align: center; }
+  td.action-create { color: var(--green); font-weight: 600; }
+  td.action-optimize { color: var(--yellow); font-weight: 600; }
+  td.action-consolidate { color: var(--orange); font-weight: 600; }
+  td.action-fix { color: var(--red); font-weight: 600; }
+
+  /* KD badges */
+  .kd-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+  .kd-easy { background: rgba(74,222,128,0.15); color: var(--green); }
+  .kd-med { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .kd-hard { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  /* Priority badge */
+  .priority-badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(129,140,248,0.15));
+    border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;
+    padding: 0.3rem 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .priority-badge .num {
+    background: var(--accent); color: var(--bg);
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0.75rem 0 1.25rem;
+    padding: 0.75rem 1rem; background: var(--surface);
+    border-radius: 8px; border: 1px solid var(--surface2);
+  }
+  .stat { font-size: 0.85rem; color: var(--text-muted); }
+  .stat strong { color: var(--text); font-weight: 700; }
+  .stat .highlight { color: var(--green); font-weight: 700; }
+
+  /* Formula box */
+  .formula-box {
+    background: var(--surface); border: 1px solid var(--surface2);
+    border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.9rem;
+  }
+  .formula-box code {
+    background: var(--surface2); padding: 0.15rem 0.4rem; border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85rem; color: var(--cyan);
+  }
+
+  /* Timeline */
+  .timeline-phase { margin: 1.5rem 0; padding-left: 1.5rem; border-left: 3px solid var(--surface2); }
+  .timeline-phase.phase1 { border-left-color: var(--green); }
+  .timeline-phase.phase2 { border-left-color: var(--yellow); }
+  .timeline-phase.phase3 { border-left-color: var(--accent2); }
+  .timeline-phase h3 { margin-top: 0; }
+
+  /* Ref link */
+  .ref-link { font-size: 0.85rem; color: var(--accent2); font-style: italic; margin: 0.75rem 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--border);
+    text-align: center; color: var(--text-muted); font-size: 0.85rem;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; color: #1a1a1a; }
+    .kpi { border: 1px solid #ddd; }
+    .kpi .value { color: #0369a1; }
+    thead th { background: #f1f5f9; }
+    tbody td { border-top-color: #e2e8f0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- === HEADER === -->
+<div class="header">
+  <div class="container">
+    <h1>SEO Content Audit</h1>
+    <div class="subtitle">{CLIENT_DOMAIN}</div>
+    <div class="meta-row">
+      <div class="meta-item"><strong>Audit Date:</strong> {DATE}</div>
+      <div class="meta-item"><strong>Data Source:</strong> SEMrush (US, {DATA_DATE})</div>
+      <div class="meta-item"><strong>Competitors:</strong> {COMPETITOR_LIST}</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- === EXECUTIVE SUMMARY === -->
+<section>
+  <h2>Executive Summary</h2>
+  <p>{EXECUTIVE_SUMMARY_TEXT}</p>
+
+  <!-- Current State KPIs (use class="value red" for problem metrics) -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value red">{TRAFFIC}</div><div class="label">Monthly Traffic</div></div>
+    <div class="kpi"><div class="value red">{NON_BRANDED_PCT}</div><div class="label">Non-Branded</div></div>
+    <div class="kpi"><div class="value red">{ZERO_TRAFFIC_PAGES}</div><div class="label">Zero-Traffic Pages</div></div>
+    <div class="kpi"><div class="value red">{HOMEPAGE_PCT}</div><div class="label">Homepage Dependency</div></div>
+  </div>
+
+  <!-- Opportunity KPIs (use class="value green" for positive metrics) -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value green">{GAP_KEYWORDS}</div><div class="label">Gap Keywords</div></div>
+    <div class="kpi"><div class="value green">{ADDRESSABLE_VOLUME}</div><div class="label">Addressable Volume</div></div>
+    <div class="kpi"><div class="value green">{EST_TRAFFIC_GAIN}</div><div class="label">Est. Traffic Gain</div></div>
+    <div class="kpi"><div class="value green">{QUICK_WINS}</div><div class="label">Quick Wins (KD&le;20)</div></div>
+  </div>
+</section>
+
+<!-- === PAGE TYPE SECTION TEMPLATE === -->
+<!--
+  Repeat this pattern for each page type (Route, State, Vehicle, etc.)
+  Priority badge numbers should reflect attainability ranking, not volume ranking
+-->
+<section>
+  <div class="priority-badge"><span class="num">{N}</span> {PRIORITY_LABEL}</div>
+  <h2>{N}. {PAGE_TYPE_NAME}</h2>
+  <div class="stats-bar">
+    <div class="stat"><strong>{KEYWORD_COUNT}</strong> keywords</div>
+    <div class="stat"><strong>{TOTAL_VOLUME}</strong> total volume</div>
+    <div class="stat">Avg KD: <span class="highlight">{AVG_KD}</span></div>
+    <div class="stat">Avg Attainability: <span class="highlight">{AVG_ATTAINABILITY}</span></div>
+  </div>
+
+  <h3>Action: {ACTION_DESCRIPTION}</h3>
+
+  <!-- Keyword table with competitor positions -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Keyword</th><th>Vol</th><th>KD</th>
+          <!-- One column per competitor -->
+          <th>{COMP_1}</th><th>{COMP_2}</th><th>{COMP_3}</th><th>{COMP_4}</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example row -->
+        <tr>
+          <td class="kw">{keyword}</td>
+          <td class="num">{volume}</td>
+          <td class="num"><span class="kd-badge kd-easy">{kd}</span></td>
+          <!-- Position classes: top10, top20, top50, none -->
+          <td class="pos top10">#{pos}</td>
+          <td class="pos none">&ndash;</td>
+          <td class="pos top20">#{pos}</td>
+          <td class="pos top50">#{pos}</td>
+          <!-- Score classes: high (>100), med (20-100), low (<20) -->
+          <td class="score high">{score}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- === 30/60/90 DAY ACTION PLAN === -->
+<section>
+  <h2>30/60/90-Day Action Plan</h2>
+
+  <div class="timeline-phase phase1">
+    <h3>Days 1&ndash;30: Quick Wins</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Action</th><th>Page Type</th><th>Target Volume</th><th>KD Range</th></tr></thead>
+        <tbody>
+          <!-- Use kd-badge classes for KD range column -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="timeline-phase phase2">
+    <h3>Days 30&ndash;60: Core Content Build</h3>
+    <!-- Same table structure -->
+  </div>
+
+  <div class="timeline-phase phase3">
+    <h3>Days 60&ndash;90: Authority Building</h3>
+    <!-- Same table structure -->
+  </div>
+</section>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    SEO Content Audit &mdash; {CLIENT_DOMAIN} &mdash; {DATE} &mdash; Data: SEMrush US
+  </div>
+</div>
+
+</body>
+</html>
