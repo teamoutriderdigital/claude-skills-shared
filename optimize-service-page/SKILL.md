@@ -102,6 +102,14 @@ import re
 with open('{keyword}-content.md', 'r', encoding='utf-8') as f:
     text = f.read().lower()
 
+# Exclude SEO metadata block above H1 from counting
+if '\n# ' in text:
+    text = text[text.index('\n# '):]
+
+# Strip markdown link URLs — only count anchor text, not URLs
+# [anchor](url) -> anchor
+text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text)
+
 words = len(text.split())
 print(f'Original word count: {words}')
 print()
@@ -235,6 +243,24 @@ Output at the very top of the content (before H1):
 **Meta Description rules:**
 - 2 options, each ≤155 characters
 - Include primary keyword + clear value proposition or CTA
+- Lead with the brand/company entity name, not with action verbs, pronouns, or generic phrases
+
+**Note:** Keywords in the SEO metadata block (everything above the H1) are NOT counted toward keyword compliance ranges. The compliance scripts automatically exclude this block, so you can freely use keywords in titles and meta descriptions without inflating counts.
+
+### Rule 10: Semantic Triple Structure in Key Positions
+
+Structure key sentences as semantic triples: [Entity] + [relationship verb] + [value/object]. This makes content parseable by AI models and knowledge graphs.
+
+Apply in these specific positions only — do not force triples into every sentence:
+
+1. **First sentence of each H2 section:** Open with the company/brand name or the service as the subject, followed by an action verb and a specific value. Example: "Redstone Manufacturing produces investment castings at tolerances of ±0.005 inches." NOT: "We are proud to offer high-quality casting services."
+2. **Meta descriptions (Rule 9):** Lead with the brand entity, not action verbs or pronouns. Example: "Redstone Manufacturing delivers precision sand castings..." NOT: "Discover our premium casting solutions..."
+3. **FAQ answers:** Start each answer with the subject entity (the thing being asked about), not "Yes," "No," or "It depends."
+
+**Do NOT:**
+- Restructure paragraphs solely to create triples — the Minimal Rewriting Principle (Rule 1) still applies
+- Sacrifice keyword compliance for triple structure — keyword ranges are the higher priority
+- Add word count just to fit more triples — word count discipline still applies
 
 ### Output Format
 
@@ -258,6 +284,14 @@ import re
 
 with open('{keyword}-optimized.md', 'r', encoding='utf-8') as f:
     text = f.read().lower()
+
+# Exclude SEO metadata block above H1 from counting
+if '\n# ' in text:
+    text = text[text.index('\n# '):]
+
+# Strip markdown link URLs — only count anchor text, not URLs
+# [anchor](url) -> anchor
+text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text)
 
 words = len(text.split())
 print(f'Total word count: {words}')
@@ -438,3 +472,4 @@ Print a summary:
 5. **Substring awareness is critical.** Every compound keyword also increments all its parent keyword counts. Track this as you write.
 6. **Python verification is mandatory.** Never rely on internal counting — always run the Python script to verify compliance.
 7. **Proper nouns are always capitalized** regardless of how they appear in the requirements data.
+8. **Semantic triples are a writing technique, not a compliance metric.** Use Entity + Relationship + Value structure in section openers, meta descriptions, and FAQ answers. Never sacrifice keyword compliance or word count discipline for triple structure.
