@@ -22,6 +22,7 @@ Before starting, verify ALL of the following exist in the current working direct
 4. **`config.json`** -- Must contain `apiKey` for NeuronWriter API
 5. **`Content brain/contentbrain.md`** -- Client voice, positioning, and terminology guide
 6. **`internal_urls.csv`** -- List of internal site URLs available for linking
+7. **`Content brain/ai-buzzwords.md`** -- AI buzzword avoidance guide (words and phrases to never use)
 
 Use `Glob` to verify these files exist. Do NOT proceed if any are missing.
 
@@ -188,7 +189,7 @@ Read `Content brain/contentbrain.md` in full. This is the #1 authority on voice 
 From `{keyword}-requirements.json`, extract:
 - `content_basic_w_ranges` -- Primary keywords with usage ranges (HARD LIMITS)
 - `content_extended_w_ranges` -- Extended/LSI keywords to add naturally
-- `h1_terms` and `h2_terms` -- Heading keyword recommendations with `usage_pc`
+- `h2_terms` -- Heading keyword recommendations with `usage_pc` (used for both H2 and H3 optimization)
 - `competitors` -- Top-ranking pages for context (headings, structure)
 - `people_also_ask` -- NeuronWriter PAA (may be empty)
 - `serp_summary` -- Search intent data
@@ -205,9 +206,23 @@ Parse ALL keywords from `content_basic_w_ranges` into a structured reference. Fo
 - The keyword string
 - Lower bound (minimum occurrences)
 - Upper bound (maximum occurrences)
-- Whether it is a substring of other keywords (substring awareness)
+- Whether it shares whole words with other keywords (word-level overlap awareness)
 
 Also parse `content_extended_w_ranges` for extended keyword targets.
+
+### Step 4.5 -- Read AI Buzzwords Avoidance List
+
+Read `Content brain/ai-buzzwords.md` in full. Internalize ALL categories of words and phrases to avoid:
+- **Universal top offenders** (delve, showcasing, aligns, notably, etc.)
+- **Transition words** (moreover, furthermore, consequently, hence, etc.)
+- **Buzzword adjectives** (crucial, pivotal, transformative, robust, seamless, etc.)
+- **AI-tell verbs** (delve, leverage, utilize, facilitate, foster, navigate, etc.)
+- **Filler phrases and openers** ("In today's fast-paced...", "It's important to note...", etc.)
+- **Abstract nouns** (landscape, tapestry, journey, realm, paradigm, etc.)
+- **Industry-specific AI clusters** (hollow innovation, vague efficiency, corporate solutions language)
+- **Structural red flags** ("It's not about X, it's about Y", uniform sentence length, etc.)
+
+**These words and phrases are BANNED from the content you write.** If you catch yourself reaching for any of them, replace with specific, concrete language relevant to the actual service being described.
 
 ---
 
@@ -228,23 +243,32 @@ Adapt heading text and content to the NEW keyword/topic, but keep the structural
 
 **This is the highest-priority rule.** Treat `content_basic_w_ranges` ranges as hard limits.
 
-**CRITICAL -- Substring Awareness:** Keywords share substrings. For example:
-- "digital marketing agency" increments counts for "digital marketing", "marketing", AND "agency"
-- "cost-effectiveness" contains "cost-effective"
-- "consulting services" contains both "consulting" and "services"
+**CRITICAL -- Word-Level Overlap Awareness:** Keywords are counted using whole-word boundary matching, not substring matching. This means "suv" does NOT count as "uv", and "glossy" does NOT count as "gloss". However, multi-word phrases still overlap at the word level. For example:
+- The text "digital marketing agency" increments counts for "digital marketing" (consecutive whole words), "marketing" (whole word), AND "agency" (whole word)
+- "consulting services" increments both "consulting" and "services" (each word is whole)
+- But "suv" does NOT increment "uv" (not a whole-word match)
+- And "glossier" does NOT increment "gloss" (not a whole-word match)
 
-When adding a compound keyword, mentally increment ALL parent substring keywords and check they remain in range.
+When adding a compound keyword, mentally increment ALL single-word and overlapping multi-word keywords that share whole words, and check they remain in range.
 
 Rules:
-- **NEVER exceed the upper bound of any range.** This is a hard constraint.
+- **Stay within the upper bound of each range, with a small overflow tolerance.** The allowed overflow depends on the keyword's upper bound:
+  - **Max <= 5x:** 1 extra instance allowed (e.g., a keyword with range 1-3x is acceptable at 4x)
+  - **Max 6-10x:** 2 extra instances allowed (e.g., a keyword with range 2-7x is acceptable at 9x)
+  - **Max > 10x:** 3 extra instances allowed (e.g., a keyword with range 10-27x is acceptable at 30x)
+  - Aim for within-range first. The overflow tolerance exists for cases where structural content (product names, navigation, pricing tables) makes exact compliance impossible.
 - Target the middle of each range for a natural distribution.
-- **Track compound keywords carefully.** Every time you write a multi-word keyword, also count it against all parent keywords.
+- **Track compound keywords carefully.** Every time you write a multi-word keyword, also count it against all overlapping whole-word keywords.
 
 ### Rule 3: Content Extended Keywords
 
-Review `content_extended_w_ranges`. Add the **majority** (target 80%+) of these extended keywords where they fit naturally. Skip any that would feel forced or off-topic.
+Review `content_extended_w_ranges`. Add a majority of these extended keywords where they fit naturally. Skip any that would feel forced or off-topic.
 
-**Budget check:** After mentally placing extended keywords, verify that basic keyword ranges are still respected. Extended keywords often contain basic keywords as substrings.
+**Extended keyword coverage targets (based on target word count from Phase 2):**
+- **Pages with 1,000+ words:** Target **75%** or more of extended keywords present.
+- **Pages under 1,000 words:** Target **65%** or more of extended keywords present.
+
+**Budget check:** After mentally placing extended keywords, verify that basic keyword ranges are still respected. Extended keywords often share whole words with basic keywords (e.g., "best ceramic coating" contains the whole word "coating").
 
 ### Rule 4: Proper Noun Capitalization
 
@@ -257,11 +281,31 @@ The requirements file lists all keywords in lowercase. Always capitalize proper 
 
 Stay within +/-5% of the target word count approved in Phase 2.
 
-### Rule 6: Heading Optimization (H1 and H2)
+### Rule 6: Heading Optimization (H1, H2, and H3)
 
-- **H1:** Include the primary keyword. Use Title Case. Check `h1_terms` for high-usage keywords (usage_pc >= 40).
-- **H2s:** Adapt from the template structure. Incorporate keywords from `h2_terms` where `usage_pc` is 40 or above. Use question format where appropriate per Content Brain rules. Title Case.
+**H1:** Include the primary keyword. Use Title Case. Check `h1_terms` for high-usage keywords (usage_pc >= 40).
+
+**H2 and H3 subheadings:** NeuronWriter provides a single `h2_terms` list of heading keywords, each with a `usage_pc` value (percentage of top-ranking competitors using that keyword in their headings). NeuronWriter scores keywords higher when they appear in H2s and lower when in H3s. Place the most important keywords in H2 headings and medium-importance ones in H3 headings.
+
+**Sort the `h2_terms` list by `usage_pc` descending, then apply these tiers:**
+
+| Tier | `usage_pc` | Place in | Action |
+|------|-----------|----------|--------|
+| Top tier | >= 40 | **H2** | MUST appear in an H2. Adapt the most relevant heading from the template structure to incorporate this keyword. |
+| Mid tier | 20-39 | **H3** | Should appear in an H3. Create H3 subsections under the most relevant H2, or adapt existing H3s from the template. |
+| Low tier | < 20 | Either | Only incorporate if it fits naturally into an existing heading. Do not force these. |
+
+**How to build headings:**
+- **Combine multiple keywords into one heading when they naturally fit together.** Look for keywords that overlap or complement each other and can form a single coherent heading. For example, if `h2_terms` includes both "sand casting" and "sand casting process," the H2 "Our Sand Casting Process" covers both. Similarly, "investment casting" + "investment casting tolerances" can become "Investment Casting Tolerances and Capabilities." Only combine when the result reads naturally -- never force unrelated keywords into the same heading.
+- **Adapt from the template, don't copy.** Use the template's heading hierarchy as a structural blueprint, but rewrite each heading to incorporate the target keyword's `h2_terms`. The template tells you WHAT sections to have; `h2_terms` tells you HOW to phrase them.
+- **Match the keyword to the right section.** Only place a keyword in a heading whose section content actually covers that topic. Never put a keyword in an unrelated heading just to score points.
+- **Use Title Case for all headings.**
 - Where natural, structure H2s as semantic relationships: "How [Brand] Delivers [Service] for [Audience]" rather than vague labels like "Our Services" or "What We Offer."
+
+**Constraints (these always apply):**
+- **Content Brain overrides heading keywords.** If a heading keyword conflicts with Content Brain terminology rules (e.g., a forbidden term), do NOT use it.
+- **Keyword overlap awareness applies to headings.** Keywords in headings count toward `content_basic_w_ranges` totals. When adding a keyword to a heading, check that it doesn't push any basic keyword over its hard max.
+- **Never put internal links in headings** (Rule 7 still applies).
 
 ### Rule 7: Internal Linking
 
@@ -331,6 +375,7 @@ The content must read as if written by a knowledgeable human, not generated by A
 - **Burstiness:** Vary the length and style of both sentences and paragraphs. Mix short, punchy sentences (8-12 words) with slightly longer, more complex ones (18-25 words). A paragraph can be two sentences or six, depending on the point being made. Avoid uniform paragraph lengths.
 - **Varied sentence openers:** Never start three or more sentences in a row with the same word or pattern. Avoid chains of "We provide... We offer... We ensure..." or "Our team... Our facility... Our process...". Restructure to lead with the benefit, the process, the material, or the outcome instead.
 - **No robotic phrasing:** Steer clear of overly formal constructions, unnecessary hedging, and common AI filler phrases. Banned patterns include: "It is important to note," "In conclusion," "In today's competitive landscape," "When it comes to," "This allows for," "In the digital age," "plays a crucial role," "a wide range of," "designed to meet your needs." If a phrase sounds like it could appear in any AI-generated article on any topic, replace it with something specific to the actual service, material, or process being described.
+- **Full buzzword avoidance list:** Refer to `Content brain/ai-buzzwords.md` (read in Step 4.5). Any word or phrase listed there is banned from the content.
 
 ### Rule 15: Semantic Triple Structure in Key Positions
 
@@ -381,6 +426,23 @@ if '\n# ' in text:
 # [anchor](url) -> anchor
 text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text)
 
+def count_kw(kw, text):
+    """Count whole-word matches of a keyword (single or multi-word).
+    Uses word boundaries so 'uv' won't match inside 'suv'
+    and 'gloss' won't match inside 'glossy'."""
+    words = kw.split()
+    pattern = r'\b' + r'\s+'.join(re.escape(w) for w in words) + r'\b'
+    return len(re.findall(pattern, text))
+
+def overflow_tolerance(hi):
+    """Allowed instances above upper bound based on max limit."""
+    if hi <= 5:
+        return 1
+    elif hi <= 10:
+        return 2
+    else:
+        return 3
+
 words = len(text.split())
 print(f'Total word count: {words}')
 print()
@@ -390,36 +452,40 @@ keywords = {
     # 'keyword': (lower_bound, upper_bound),
 }
 
-print(f'{"Keyword":<35} {"Count":>5} {"Range":>10} {"Status":>10}')
-print('-' * 65)
+print(f'{"Keyword":<35} {"Count":>5} {"Range":>10} {"Hard Max":>9} {"Status":>10}')
+print('-' * 75)
 
 issues = []
 for kw, (lo, hi) in sorted(keywords.items(), key=lambda x: x[1][1]):
-    count = len(re.findall(re.escape(kw), text))
-    if count > hi:
+    count = count_kw(kw, text)
+    tolerance = overflow_tolerance(hi)
+    hard_max = hi + tolerance
+    if count > hard_max:
         status = 'STUFFED'
-        issues.append((kw, count, lo, hi))
+        issues.append((kw, count, lo, hi, hard_max))
+    elif count > hi:
+        status = 'OVER-OK'
     elif count < lo:
         status = 'MISSING'
-        issues.append((kw, count, lo, hi))
+        issues.append((kw, count, lo, hi, hard_max))
     else:
         status = 'OK'
-    print(f'{kw:<35} {count:>5} {lo}-{hi:>3}x {status:>10}')
+    print(f'{kw:<35} {count:>5} {lo}-{hi:>3}x {hard_max:>7}x {status:>10}')
 
 if issues:
     print(f'\n=== {len(issues)} ISSUES FOUND ===')
-    for kw, count, lo, hi in issues:
-        print(f'  {kw}: {count}x (target {lo}-{hi}x)')
+    for kw, count, lo, hi, hard_max in issues:
+        print(f'  {kw}: {count}x (target {lo}-{hi}x, hard max {hard_max}x)')
 else:
     print('\nAll keywords within range!')
 ```
 
 ### Compliance Loop Rules
 
-1. **If ALL keywords are within range:** Proceed to Phase 7.
-2. **If issues exist:** Fix them using targeted `Edit` calls on the file:
-   - Fix the MOST over-limit keyword first (the one furthest above its upper bound)
-   - Fixing one keyword often fixes others due to substring overlap
+1. **If ALL keywords are within range or within overflow tolerance (OVER-OK):** Proceed to Phase 7. Keywords marked OVER-OK are above the ideal range but within the allowed overflow tolerance and do not need fixing.
+2. **If STUFFED or MISSING issues exist:** Fix them using targeted `Edit` calls on the file:
+   - Fix the MOST over-limit keyword first (the one furthest above its hard max)
+   - Fixing one keyword often fixes others due to word-level overlap
    - For STUFFED keywords: replace excess occurrences with synonyms, pronouns, or rephrase
    - For MISSING keywords: insert naturally into existing sentences
    - After edits, re-run the Python compliance check
@@ -429,15 +495,117 @@ else:
 Also check extended keyword coverage on the final pass:
 
 ```python
-# Add this to the compliance script
+# Add this to the compliance script (count_kw function must be defined above)
 extended = [
     # List all extended keywords from content_extended_w_ranges
 ]
-present = sum(1 for kw in extended if re.findall(re.escape(kw), text))
+present = sum(1 for kw in extended if count_kw(kw, text))
 print(f'\nExtended keywords: {present}/{len(extended)} ({round(present/len(extended)*100)}%)')
 ```
 
-Target: 80%+ of extended keywords present.
+Target: **75%+** for pages with 1,000+ words, **65%+** for pages under 1,000 words (based on the target word count from Phase 2).
+
+---
+
+## Phase 6.5: AI Buzzword Compliance Check
+
+**This phase is mandatory. Run it after keyword compliance passes and before upload.**
+
+Scan the content in `{keyword}-optimized.md` against the buzzword categories from `Content brain/ai-buzzwords.md`. Run this Python script via Bash:
+
+```python
+import re
+
+with open('{keyword}-optimized.md', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+# Buzzword lists from ai-buzzwords.md
+ai_words = [
+    'delve', 'leverage', 'utilize', 'facilitate', 'foster', 'harness',
+    'navigate', 'underscore', 'endeavor', 'augment', 'elevate', 'empower',
+    'propel', 'catalyze', 'galvanize', 'streamline', 'unleash', 'turbocharge',
+    'robust', 'seamless', 'cutting-edge', 'state-of-the-art', 'pivotal',
+    'transformative', 'groundbreaking', 'revolutionary', 'unprecedented',
+    'profound', 'invaluable', 'paramount', 'stellar', 'comprehensive',
+    'innovative', 'tapestry', 'paradigm', 'synergy', 'ecosystem',
+    'cornerstone', 'catalyst', 'arsenal', 'methodology', 'showcasing',
+]
+
+ai_phrases = [
+    "in today's fast-paced",
+    'in the ever-evolving',
+    "it's important to note",
+    "it's worth mentioning",
+    'in the realm of',
+    "let's dive into",
+    "let's explore",
+    'unlock the power of',
+    'in an ever-evolving landscape',
+    'as we navigate',
+    'plays a vital role',
+    'plays a crucial role',
+    'plays a significant role',
+    'serves as a testament',
+    'as we delve deeper',
+    'welcome to the world of',
+    'in conclusion',
+    'in summary',
+    'a wide range of',
+    'designed to meet your needs',
+    'when it comes to',
+    'this allows for',
+    'in the digital age',
+    "it's not about",
+    'moreover',
+    'furthermore',
+    'consequently',
+    'hence',
+    'notably',
+    'nevertheless',
+    'nonetheless',
+    'notwithstanding',
+    'revolutionize',
+    'redefining what',
+    'a new era of',
+    'drive operational excellence',
+    'digital transformation journey',
+    'mission-critical',
+    'next-generation',
+    'game-changer',
+    'unprecedented precision',
+]
+
+text_lower = text.lower()
+found = []
+
+for word in ai_words:
+    matches = re.findall(r'\b' + re.escape(word) + r'\b', text_lower)
+    if matches:
+        found.append((word, len(matches), 'WORD'))
+
+for phrase in ai_phrases:
+    matches = re.findall(re.escape(phrase), text_lower)
+    if matches:
+        found.append((phrase, len(matches), 'PHRASE'))
+
+if found:
+    print(f'=== {len(found)} AI BUZZWORD VIOLATIONS FOUND ===')
+    print(f'{"Type":<8} {"Count":>5}  Term')
+    print('-' * 60)
+    for term, count, typ in sorted(found, key=lambda x: -x[1]):
+        print(f'{typ:<8} {count:>5}  {term}')
+else:
+    print('No AI buzzword violations found!')
+```
+
+### Buzzword Compliance Rules
+
+1. **If no violations found:** Proceed to Phase 7 (Upload).
+2. **If violations found:** Fix them using targeted `Edit` calls:
+   - Replace each flagged word/phrase with specific, concrete language
+   - Do NOT replace with another word from the buzzword list
+   - After edits, re-run the buzzword scan AND the keyword compliance check (fixes must not break keyword ranges)
+3. **Repeat up to 2 passes.** If violations remain after 2 passes, show them to the user.
 
 ---
 
@@ -561,7 +729,7 @@ Print a summary:
 2. **This is CREATION, not optimization.** You are writing from scratch. There is no "original content" to preserve. But you ARE following a template page's STRUCTURE.
 3. **Never compromise readability for keyword density.** Natural language always wins. If a keyword cannot be inserted without awkwardness, skip it.
 4. **Word count discipline.** Stay within +/-5% of the approved target. Do not inflate content with filler.
-5. **Substring awareness is critical.** Every compound keyword also increments all its parent keyword counts. Track this as you write.
+5. **Word-level overlap awareness is critical.** Keywords are matched as whole words (using `\b` word boundaries), so "suv" does not count as "uv" and "glossy" does not count as "gloss". However, multi-word phrases still overlap at the word level: "ceramic coating services" increments both "ceramic coating" and "coating". Track these whole-word overlaps as you write.
 6. **Python verification is mandatory.** Never rely on internal counting. Always run the Python script to verify compliance.
 7. **Proper nouns are always capitalized** regardless of how they appear in the requirements data.
 8. **User interaction points.** This skill has TWO mandatory user interaction points: word count approval (Phase 2, Step 2.3) and template selection (Phase 3, Step 3.1). Do NOT skip these.
@@ -569,3 +737,4 @@ Print a summary:
 10. **Never use foreign words**, even if they appear in NeuronWriter keyword requirements. Skip any non-English term.
 11. **No ChatGPT slop.** No filler phrases, no empty superlatives, no generic conclusions. Every sentence must carry information.
 12. **Semantic triples are a writing technique, not a compliance metric.** Use Entity + Relationship + Value structure in section openers, the opening paragraph, meta descriptions, and FAQ answers. This improves AI parseability but never overrides keyword compliance, word count, or Content Brain rules.
+13. **AI buzzwords are banned.** Every word, phrase, and structural pattern listed in `Content brain/ai-buzzwords.md` must be avoided. The buzzword compliance check in Phase 6.5 catches violations, but aim to avoid them during writing.

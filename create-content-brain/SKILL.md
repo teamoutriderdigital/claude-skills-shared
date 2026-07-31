@@ -12,21 +12,36 @@ Generate a comprehensive `contentbrain.md` file for a client that serves as the 
 
 Before running this skill, ensure the following files exist in the client's project directory under a `Content brain\` folder:
 
-1. **Call transcripts** (`.md` files) -- Transcripts of strategy calls between the team and the client. These are the primary source for client preferences, positioning mandates, and terminology rules. Client opinions are always top priority.
-2. **Website URL file** (`website url.txt`) -- A text file containing the client's website URL.
+1. **Call transcripts** (`.md` or `.txt` files) -- Transcripts of strategy calls between the team and the client. These are the primary source for client preferences, positioning mandates, and terminology rules. Client opinions are always top priority.
+2. **Onboarding document** (if present) -- An `.md` file containing structured onboarding data (business name, services, differentiators, FAQs, trust signals, locations, team info, etc.). This is a critical source for factual data and should be treated with the same priority as transcripts.
+3. **Website URL file** (`website url.txt`) -- A text file containing the client's website URL.
 
 ## Process
 
 ### Step 1: Read Source Materials
 
-1. Use `Glob` to find all files in the `Content brain\` folder
-2. Read all `.md` transcript files to extract:
+1. Use `Glob` to find all files in the `Content brain\` folder (check for `.md`, `.txt`, and any other text files)
+2. Read all transcript files (`.md` and `.txt`) to extract:
    - **Client positioning mandates** -- How the client wants to be described, what they are NOT, identity boundaries
    - **Terminology preferences** -- Words to always use, never use, or handle carefully
    - **Business context** -- Services, industries, target audience, competitive advantages
    - **Content strategy preferences** -- What types of content to prioritize, how content should be structured
    - **Do/don't rules** -- Any explicit instructions about content style, approach, or framing
-3. Read `website url.txt` to get the client's website URL
+3. Read any **onboarding document** (look for files with "onboarding" in the name, or structured `.md` files with fields like "Business Name," "Services Offered," "Year Founded," etc.) and extract:
+   - **Business identity** -- Legal name, year founded, business type, tagline, license state
+   - **Services offered** -- Full list of services, revenue-driving services
+   - **Differentiators** -- What makes them different, in the client's own words
+   - **Locations** -- All business locations, service areas, primary address
+   - **Trust signals** -- BBB rating, licensed/insured/bonded status, years in business, team size, projects completed, customers served, response time
+   - **Sales process** -- How they sell, average job value, lifetime customer value
+   - **Contact info** -- Phone numbers, emails, CTA preferences
+   - **FAQs** -- Any pre-written FAQ content (use these as the basis for FAQ sections in the content brain)
+   - **Content author** -- Who should be credited on content
+   - **Owner bio** -- For author/about page context
+   - **Social media profiles** -- For reference and linking
+4. Read `website url.txt` to get the client's website URL
+
+**Priority order when sources conflict:** Client's spoken words in transcripts > Onboarding document > Live website content. If the onboarding form says one thing and the transcript says another, the transcript wins.
 
 ### Step 2: Analyze the Live Website
 

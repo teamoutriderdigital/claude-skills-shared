@@ -1,12 +1,11 @@
 ---
 name: local-seo-audit
 description: >
-  Comprehensive local SEO and Google Maps audit for local service businesses.
-  Analyzes Google Business Profile, local pack rankings, organic positions,
-  competitor landscape, schema markup, page speed, technical SEO, and citation
-  consistency. Captures screenshots of key findings via browser automation.
-  Produces a client-ready HTML report with embedded evidence screenshots.
-  Use when auditing a local business website for local search performance.
+  Local SEO checklist audit for local service businesses. Checks the 16 highest-impact
+  items from the Game Changers and Technical & Content tiers of the Local SEO Impact
+  Checklist. Audits Google Business Profile via browser automation and website technical
+  SEO via page fetching. Produces a checklist-style HTML scorecard report with
+  pass/needs-work/fail status per item, evidence screenshots, and a prioritized action plan.
 argument-hint: [domain] [city, state]
 arguments: [domain, location]
 disable-model-invocation: true
@@ -20,6 +19,7 @@ allowed-tools:
   - Bash(cp *)
   - Bash(start *)
   - Bash(gh *)
+  - Bash(ls *)
   - Glob
   - Grep
   - Agent
@@ -35,18 +35,17 @@ allowed-tools:
   - mcp__chrome-devtools__take_screenshot
   - mcp__chrome-devtools__navigate_page
   - mcp__chrome-devtools__list_pages
-  - mcp__dfs-mcp__serp_organic_live_advanced
-  - mcp__dfs-mcp__dataforseo_labs_google_competitors_domain
-  - mcp__dfs-mcp__backlinks_summary
-  - mcp__semrush__organic_research
-  - mcp__semrush__overview_research
-  - mcp__semrush__execute_report
-  - mcp__semrush__get_report_schema
 ---
 
-# Local SEO & Google Maps Audit
+# Local SEO Checklist Audit
 
-You are conducting a comprehensive local SEO audit for **$domain** located in **$location**.
+You are conducting a local SEO checklist audit for **$domain** located in **$location**.
+
+This audit checks the 16 highest-impact items from the Local SEO Impact Checklist, covering two tiers:
+- **Game Changers** (9 items) — GBP and business fundamentals
+- **Technical & Content** (7 items) — website-level checks
+
+Each item is scored as **PASS**, **NEEDS WORK**, or **FAIL** with evidence and recommendations.
 
 ## Setup
 
@@ -85,7 +84,7 @@ This tool saves screenshots directly to disk. It is the ONLY reliable way to sav
    ls -la screenshots/{filename}.png
    ```
 
-**If full-page capture is needed** (e.g., long PageSpeed results), add `fullPage: true`:
+**If full-page capture is needed**, add `fullPage: true`:
 ```
 mcp__chrome-devtools__take_screenshot
   filePath: "screenshots/{filename}.png"
@@ -101,17 +100,13 @@ You MUST capture at minimum these screenshots during the audit. After each one, 
 
 | Phase | Filename | What to Capture |
 |-------|----------|----------------|
-| 2 | `screenshots/serp-{keyword-1}.png` | Google Maps local pack for primary keyword |
-| 2 | `screenshots/serp-{keyword-2}.png` | Google Maps local pack for secondary keyword |
-| 4 | `screenshots/gbp-listing-primary.png` | Client's main GBP listing overview |
-| 4 | `screenshots/gbp-duplicates.png` | All listings if duplicates found |
-| 5 | `screenshots/competitor-{name-1}.png` | Top competitor GBP listing |
-| 5 | `screenshots/competitor-{name-2}.png` | Second competitor GBP listing |
-| 6 | `screenshots/schema-client.png` | Google Rich Results Test for client |
-| 6 | `screenshots/schema-competitor.png` | Rich Results Test for top competitor |
-| 7 | `screenshots/pagespeed-cwv.png` | PageSpeed Insights CWV section |
-| 7 | `screenshots/pagespeed-lighthouse.png` | Lighthouse scores section |
-| 8 | `screenshots/citation-{source}-issue.png` | Any NAP mismatch found (if applicable) |
+| 2 | `screenshots/gbp-overview.png` | Client's GBP listing overview showing name, address, rating |
+| 2 | `screenshots/gbp-categories.png` | GBP About tab showing primary + secondary categories |
+| 2 | `screenshots/gbp-reviews.png` | Recent reviews section showing velocity |
+| 2 | `screenshots/gbp-hours.png` | Business hours section |
+| 2 | `screenshots/gbp-photos.png` | Photos tab showing count and recency |
+| 3 | `screenshots/serp-ads.png` | SERP showing LSA/ad placements for primary keyword |
+| 4 | `screenshots/pagespeed-mobile.png` | PageSpeed Insights mobile results |
 
 At the end of each phase that requires screenshots, run:
 ```bash
@@ -119,277 +114,318 @@ ls -la screenshots/
 ```
 to confirm files are accumulating. If a screenshot is missing, go back and capture it before moving to the next phase.
 
+---
+
 ## Phase 1: Business Discovery
 
-- Fetch `https://www.$domain/` and `https://www.$domain/sitemap` (or sitemap.xml) via WebFetch
-- Extract: business name, full address, phone, email, services offered, service areas, hours
-- Identify all page types: service pages, location/area pages, blog posts, specialty pages
+- Fetch `https://www.$domain/` and `https://www.$domain/sitemap.xml` (or sitemap) via WebFetch
+- Extract: business name, full address, phone, services offered, service areas, hours
+- Identify all page types: service pages, location/area pages, blog posts
 - Count total pages by type
+- Build a list of the business's core services (needed for later checks)
 
-## Phase 2: Google Maps / Local Pack Analysis
+---
 
-Determine 8-10 high-value keywords based on the business type and services discovered in Phase 1. Use patterns like:
-- `[primary service] [city]` (e.g., "concrete contractor tulare ca")
-- `[secondary service] [city]` (e.g., "stamped concrete tulare")
-- `[service] near me` from the client's city
-- `[service] [neighboring cities]`
+## Phase 2: Google Business Profile Checklist (Game Changers)
 
-For each keyword, use `mcp__dfs-mcp__serp_organic_live_advanced` with:
-- `language_code: "en"`
-- `location_name: "[City],[State],United States"`
-- `depth: 20`
+This phase checks GBP-related items from the Game Changers tier using browser automation.
 
-Record for each keyword: local pack position (or "Not showing"), top 3 local pack winners with review counts, and any Local Services Ads.
+### Step 1: Find the GBP Listing
 
-**SCREENSHOT:** Navigate to Google Maps in the browser, search 2-3 key terms, and take screenshots showing where the client ranks (or doesn't) in the local pack. Save as `screenshots/serp-{keyword-slug}.png`.
+Search Google Maps in the browser for the exact business name to find the GBP listing.
 
-## Phase 3: Organic Search Rankings
+### Step 2: Check Item #01 — Visible Address (Brick-and-Mortar) vs Hidden SAB
 
-From the same SERP data collected in Phase 2, extract organic positions for the client's domain. Note keywords where the client ranks organically but NOT in the local pack — this pattern indicates GBP issues rather than website issues.
+- Look at the GBP listing for a visible physical address
+- If the address is shown: the business has a storefront/office listing (stronger for Local Pack)
+- If the address is hidden and only a service area is shown: it's a Service Area Business (SAB)
+- **Score:** PASS if visible address shown, NEEDS WORK if SAB (note: SAB is valid but generally weaker for pack rankings)
+- **Evidence:** Note whether address is displayed or hidden
 
-## Phase 4: Google Business Profile Audit
+### Step 3: Check Item #02 — Physical Location Within City Boundaries
 
-Search Google Maps in the browser for the exact business name + phone number to find ALL GBP listings.
+- Read the address from the GBP listing
+- Compare the city in the address to the target city ($location)
+- If the address is in the target city: strong ranking boost for city-name keywords
+- If the address is outside the city or in a suburb: weaker positioning for city keywords
+- **Score:** PASS if inside target city, NEEDS WORK if nearby but outside, FAIL if address is in a different city
+- **Evidence:** Note the listed address and target city
 
-**Critical: Check for duplicate listings.** Search for:
-- Exact business name
-- Business name + city
-- Phone number
-- Variations of the name
+### Step 4: Check Item #04 — Keywords in Business Name
 
-For EACH listing found, capture via `get_page_text` and screenshots:
-- Business name (exact), review count, rating, address (or "none"), primary category
-- Secondary categories (check About tab)
-- Google Posts (latest date), review responses (does owner respond?), photo activity
-- Business description, services section, hours, attributes, payments
-- Whether it can appear in local pack (has physical address = yes)
+- Read the exact business name from the GBP listing
+- Check if it contains:
+  - Service keywords (e.g., "cleaning", "plumbing", "concrete")
+  - City/location keywords
+- A business name with relevant keywords ranks significantly better
+- **Score:** PASS if name contains service + location keywords, NEEDS WORK if partial match (service OR city only), FAIL if generic name with no keywords
+- **Evidence:** Note the exact business name and what keywords it contains/lacks
+- **Recommendation if not passing:** Consider filing a DBA that includes service + city keywords
 
-**SCREENSHOT:** Each GBP listing overview. If duplicates found, screenshot the search results page showing all listings together. Save as `screenshots/gbp-listing-{a|b|c}.png`.
+### Step 5: Check Item #05 — GBP Categories (Primary + All Slots)
 
-If duplicate listings are found, this becomes the #1 critical finding. Calculate total reviews across all listings and note the split.
+- Navigate to the GBP About tab or business details to see categories
+- Extract the primary category and ALL secondary categories
+- Assess:
+  - Is the primary category the most specific match for the core service?
+  - Are all available category slots filled with genuinely applicable categories?
+  - Are there obvious missing categories?
+- **Score:** PASS if primary is optimal and multiple relevant secondaries filled, NEEDS WORK if primary is good but secondaries are sparse or missing obvious ones, FAIL if primary category is wrong or too generic
+- **Evidence:** List all current categories
 
-## Phase 5: Competitor Research
+**SCREENSHOT:** The GBP About tab showing categories. Save as `screenshots/gbp-categories.png`.
 
-Use `mcp__dfs-mcp__dataforseo_labs_google_competitors_domain` to find organic keyword competitors:
-- `target: "$domain"`
-- `exclude_top_domains: true`
-- `limit: 15`
+### Step 6: Check Item #08 — Review Velocity
 
-Then search Google Maps for the top 5-8 direct competitors to get:
-- Review count, rating, GBP listing count (check for their duplicates too)
-- Address/location (to understand proximity advantage)
+- Look at the reviews section of the GBP listing
+- Check:
+  - Total review count
+  - Star rating
+  - Dates of the most recent 5-10 reviews to assess velocity
+  - Calculate approximate reviews per month over the last 3-6 months
+  - How recent is the latest review?
+- **Score:** PASS if consistent recent reviews (2+ per month) with latest within 2 weeks, NEEDS WORK if sporadic reviews or latest older than 1 month, FAIL if no reviews in 3+ months or very few total reviews
+- **Evidence:** Note total count, rating, latest review date, estimated monthly velocity
 
-Use WebFetch on the top 3-4 competitor websites to analyze:
-- Schema markup, content strategy, pricing transparency, location pages, blog, certifications
-- Unique differentiators
-
-Build a comprehensive competitor comparison table.
+**SCREENSHOT:** Recent reviews section. Save as `screenshots/gbp-reviews.png`.
 
-**SCREENSHOT:** Top 2-3 competitor GBP listings. Save as `screenshots/competitor-{name}.png`.
+### Step 7: Check Item #09 — Extended GBP Hours
 
-## Phase 6: Website Technical SEO
+- Check the listed business hours
+- Assess:
+  - Are hours set for every day the business is reachable?
+  - Are hours restrictive (e.g., 9-5 only when they answer phones 7am-8pm)?
+  - Does "Closed" show during times competitors are listed as open?
+  - Is 24/7 listed (via answering service)?
+- **Score:** PASS if hours cover the full answerability window (extended hours or 24/7), NEEDS WORK if standard business hours only, FAIL if hours are missing or overly restrictive
+- **Evidence:** Note listed hours for each day
 
-### Schema Markup
-Use WebFetch on the client's homepage to check for JSON-LD structured data. Also check a service page and a location page.
-
-Navigate the browser to `https://search.google.com/test/rich-results` and test the client URL. Wait for results.
-**SCREENSHOT:** The Rich Results Test results. Save as `screenshots/schema-client.png`.
-
-Test the top competitor's URL for comparison.
-**SCREENSHOT:** Save as `screenshots/schema-competitor.png`.
+**SCREENSHOT:** Business hours section. Save as `screenshots/gbp-hours.png`.
 
-### On-Page SEO
-Audit one key service page via WebFetch:
-- Title tag, meta description, H1, content depth (word count), FAQ sections, pricing
-- Image alt text quality, internal linking, breadcrumbs, map embed
-
-### Location Pages
-If the client has location pages, audit 2-3 for:
-- Unique vs templated content, local keywords, embedded maps, local testimonials
-- LocalBusiness schema per page
-
-## Phase 7: Page Performance, Technical Audit & Core Web Vitals
-
-### Step 1: Ask User for Technical Audit Data
-
-Use AskUserQuestion to ask:
-
-> "Do you have any of the following technical audit data to provide? These tools require paid accounts that I can't access directly, but their data significantly strengthens the report."
->
-> Options:
-> 1. **SEMrush Site Audit screenshot** — Shows Health Score, errors, warnings, top issues (crawlability, HTTPS, performance, internal linking, markup)
-> 2. **Ahrefs Site Audit screenshot** — Shows Health Score, crawled URLs, errors/warnings/notices, top issues
-> 3. **PageSpeed Insights screenshot** — Shows Core Web Vitals, Lighthouse scores
-> 4. **I don't have any of these** — Skip to automated checks
->
-> Allow multiple selections. If they select any, ask them to save the screenshot files to the working directory and provide the filenames.
-
-### Step 2: Process User-Provided Technical Audit Data
-
-If the user provides a **SEMrush Site Audit** screenshot, read the image and extract:
-- **Site Health Score** (0-100%)
-- **Errors count** (critical issues)
-- **Warnings count** (important issues)
-- **Notices count** (minor issues)
-- **Top Issues** with affected page counts. Common SEMrush issues include:
-  - X pages have duplicate title tags
-  - X pages have duplicate meta descriptions
-  - X pages returned 4XX status codes
-  - X pages have broken internal links
-  - X pages have slow load speed
-  - X pages have no meta description
-  - X images don't have alt attributes
-  - X pages have duplicate content
-  - X pages have redirect chains
-  - Sitemap issues, robots.txt issues, HTTPS issues
-  - Internal linking issues, crawl depth issues
-  - Hreflang issues, canonical issues
-
-Include all extracted data in the report under Section 3B: Technical Site Audit. Reference the screenshot image in the HTML report.
-
-If the user provides an **Ahrefs Site Audit** screenshot, extract similarly:
-- Health Score, crawled URLs, error/warning/notice counts
-- Top issues with page counts (canonical-to-redirect, non-canonical in sitemap, 3XX receiving traffic, etc.)
-
-If the user provides **PageSpeed Insights** data, extract:
-- CWV pass/fail status
-- Real user data: LCP, INP, CLS, FCP, TTFB
-- Lighthouse lab scores: Performance, Accessibility, Best Practices, SEO
-- Lab metrics: FCP, LCP, TBT, CLS, Speed Index
-
-### Step 3: Automated PageSpeed Insights Test via Browser
-
-**Always run this step** — even if the user provided a screenshot, fresh data confirms current state.
-
-1. Get browser context: `mcp__claude-in-chrome__tabs_context_mcp` with `createIfEmpty: true`
-2. Create a new tab: `mcp__claude-in-chrome__tabs_create_mcp`
-3. Navigate to PageSpeed Insights: `mcp__claude-in-chrome__navigate` to `https://pagespeed.web.dev/`
-4. Wait 2 seconds for page load
-5. Find the URL input field using `mcp__claude-in-chrome__read_page` with `filter: "interactive"`
-6. Click on the URL input field, then type the client URL: `mcp__claude-in-chrome__computer` with `action: type`, `text: "https://www.$domain/"`
-7. Press Enter to start the analysis: `mcp__claude-in-chrome__computer` with `action: key`, `text: "Enter"`
-8. **Wait for analysis to complete** — this takes 15-45 seconds. Use `mcp__claude-in-chrome__computer` with `action: wait`, `duration: 30`. Then check if results loaded by taking a screenshot. If still loading (spinner visible), wait another 15 seconds.
-9. Once results are loaded, the page shows two sections:
-   - **Top section:** "Discover what your real users are experiencing" — Core Web Vitals Assessment (Pass/Fail) with LCP, INP, CLS, FCP, TTFB
-   - **Bottom section:** "Diagnose performance issues" — Lighthouse scores (Performance, Accessibility, Best Practices, SEO) with detailed lab metrics
-
-10. **SCREENSHOT the CWV section:** Scroll to the top of results. Take screenshot. Save as `screenshots/pagespeed-cwv.png`
-
-11. **Extract CWV data** using `mcp__claude-in-chrome__get_page_text`. Look for:
-    - "Core Web Vitals Assessment: Passed" or "Failed"
-    - LCP value and status (green/amber/red)
-    - INP value and status
-    - CLS value and status
-    - FCP value and status
-    - TTFB value and status
-
-12. **Scroll down to Lighthouse scores section.** Take screenshot. Save as `screenshots/pagespeed-lighthouse.png`
-
-13. **Extract Lighthouse data** from page text:
-    - Performance score (0-100)
-    - Accessibility score (0-100)
-    - Best Practices score (0-100)
-    - SEO score (0-100)
-    - Lab metrics: FCP, LCP, Total Blocking Time, CLS, Speed Index
-
-14. Record all data for the report. Classify each metric:
-    - **Good (green):** LCP < 2.5s, CLS < 0.1, INP < 200ms, FCP < 1.8s, TTFB < 0.8s
-    - **Needs Improvement (amber):** Between good and poor thresholds
-    - **Poor (red):** LCP > 4.0s, CLS > 0.25, INP > 500ms, FCP > 3.0s, TTFB > 1.8s
-
-### Step 4: Basic Automated Technical Checks
-
-Regardless of whether user data was provided, perform these checks that Claude CAN do directly:
-
-1. **Fetch robots.txt** — `WebFetch https://www.$domain/robots.txt` — check for blocked important paths
-2. **Fetch sitemap** — `WebFetch https://www.$domain/sitemap.xml` — count pages, check structure
-3. **Indexation estimate** — Use `WebSearch` with `site:$domain` to estimate indexed page count; compare against sitemap count
-4. **Spot-check canonicals** — Fetch 5 key pages via WebFetch, check if canonical tags point to themselves or to redirects
-5. **HTTPS check** — Verify the site loads on HTTPS and redirects from HTTP
-
-## Phase 8: Citation Consistency Audit
-
-This is a critical step for local SEO. Check the client's NAP (Name, Address, Phone) consistency across citation sources.
-
-**Canonical NAP:** Use the primary GBP listing's name, address, and phone as the reference.
-
-For each citation source listed in `${CLAUDE_SKILL_DIR}/citation-sources.md`:
-1. Use WebFetch to search for the business on that platform
-2. Extract the listed: name, address, phone, website URL
-3. Compare against canonical NAP
-4. Flag: exact match, partial match (minor variation), mismatch, or not found
-
-Build a citation consistency table:
-
-| Source | Name | Address | Phone | Website | Status |
-|--------|:----:|:-------:|:-----:|:-------:|:------:|
-| Google GBP | match/mismatch | match/mismatch | ... | ... | OK/Issue |
-
-Calculate overall citation consistency score: (matching citations / total checked) x 100%.
-
-Flag specific issues:
-- Old addresses, wrong phone numbers, misspelled names, HTTP vs HTTPS website URLs
-- Missing citations that competitors have
-- Inconsistent business name formats
-
-**SCREENSHOT:** Any citation listing showing a clear NAP mismatch. Save as `screenshots/citation-{source}-issue.png`.
-
-## Phase 9: Compile Prioritized Action Plan
-
-Organize ALL findings into a prioritized action plan:
-
-### Critical (Do This Week)
-- Duplicate GBP listings (if found)
-- Major citation inconsistencies
-- Missing GBP categories or services
-
-### High Priority (Within 30 Days)
-- Schema markup implementation
-- Technical SEO fixes (canonical issues, sitemap cleanup)
-- Page speed improvements
-- GBP engagement gaps
-
-### Medium Priority (30-60 Days)
-- Content gaps (blog, enhanced location pages)
-- Citation building for missing directories
-- Competitive content strategies to adopt
-
-### Ongoing
-- Review generation, Google Posts, content publishing, ranking monitoring
-
-Create a 90-day roadmap and success metrics table (current vs target).
-
-## Phase 10: Generate HTML Report
-
-Create a professional HTML report using the design template at `${CLAUDE_SKILL_DIR}/report-template.html` as reference for CSS styling. The report must include:
-
-1. **Header:** Client business name, domain, audit date
-2. **Executive Summary:** Top 3 issues, key stats (reviews, local pack appearances, health score)
-3. **Section 1:** Google Maps / Local Pack — ranking tables with screenshots
-4. **Section 2:** GBP Audit — listing comparison table, duplicate finding, screenshots
-5. **Section 3:** Website Technical SEO — schema comparison, on-page audit
-6. **Section 3A:** Page Performance — CWV data, Lighthouse scores (if available)
-7. **Section 3B:** Technical Audit — health score, errors (if Ahrefs data provided)
-8. **Section 4:** Citation Consistency — NAP comparison table, consistency score, screenshots
-9. **Section 5:** Competitor Benchmarking — full comparison table with all competitors
-10. **Section 6:** Prioritized Action Plan — tables by priority level
-11. **Section 7:** 90-Day Roadmap — timeline visualization
-12. **Section 8:** Quick Reference — what they do well + what needs to change
-
-Embed ALL screenshots from the `screenshots/` folder at their relevant sections with descriptive captions.
+### Step 8: Check Item #29 — GBP Photos (Monthly Refresh)
+
+- Navigate to the Photos tab of the GBP listing
+- Check:
+  - Total photo count
+  - Types of photos: real work photos, team, premises (vs stock/logo only)
+  - Recency: when were the most recent photos added?
+  - Are photos being added at least monthly?
+- **Score:** PASS if 20+ photos with recent additions (last 30 days), real work/team shots, NEEDS WORK if photos exist but are stale (60+ days) or mostly stock/logo, FAIL if very few photos (<5) or no recent additions in 3+ months
+- **Evidence:** Note total count, types, and recency
+
+**SCREENSHOT:** Photos tab. Save as `screenshots/gbp-photos.png`.
+
+**SCREENSHOT:** Overall GBP listing. Save as `screenshots/gbp-overview.png`.
+
+---
+
+## Phase 3: Google Ads & Press Release Check (Game Changers)
+
+### Step 1: Check Item #03 — Google Ads / LSAs
+
+- In the browser, search Google for the primary service keyword + city (e.g., "commercial cleaning $location")
+- Check the SERP for:
+  - Are Local Services Ads (LSAs) showing? (These appear at the very top with a green checkmark)
+  - Is the client appearing in LSAs?
+  - Are standard Google Ads (search ads) showing for this keyword?
+  - Is the client running Google Ads?
+- **Score:** PASS if client has active LSAs and/or search ads, NEEDS WORK if ads exist in the market but client isn't running them, FAIL if LSAs dominate the SERP and client has no ad presence at all
+- **Evidence:** Note what ad types appear and whether client is present
+
+**SCREENSHOT:** The SERP showing ad placements. Save as `screenshots/serp-ads.png`.
+
+### Step 2: Check Item #06 — Strategic Press Releases
+
+- Use WebSearch to search for: `"$businessName" press release` and `"$businessName" site:prnewswire.com OR site:businesswire.com OR site:globenewswire.com OR site:prweb.com`
+- Also search: `"$businessName" news`
+- Check:
+  - Has the business published any press releases?
+  - How recent are they?
+  - Do they link to relevant service pages (not just homepage)?
+  - Are they using brand anchors (good) or keyword-rich anchors (bad)?
+- **Score:** PASS if recent press releases (within 6 months) with brand anchors linking to service pages, NEEDS WORK if press releases exist but are old or poorly executed, FAIL if no press release history at all
+- **Evidence:** Note any press releases found with dates and links
+
+---
+
+## Phase 4: Website & Content Checklist (Technical & Content)
+
+### Step 1: Check Item #07 — Dedicated, Optimized Service Pages
+
+Using the sitemap and page list from Phase 1:
+- Check if there is one dedicated page per core service
+- For each service page, fetch via WebFetch and check:
+  - Does the title tag contain service + city? (e.g., "Commercial Cleaning in $location")
+  - Is there a clear conversion path (phone number, form, CTA)?
+  - Does it include process details, pricing signals, and proof (testimonials/case studies)?
+- **Score:** PASS if every core service has a dedicated page with service+city in title and conversion path, NEEDS WORK if pages exist but titles are weak or missing conversion elements, FAIL if services are lumped onto a single page or major services lack dedicated pages
+- **Evidence:** List each service and whether it has a dedicated page with proper title
+
+### Step 2: Check Item #23 — Title Tags (Service + City First)
+
+- Fetch the homepage and all key service pages via WebFetch
+- Extract the `<title>` tag from each
+- Check if service keyword + city appear near the start of the title
+- Note any titles that are generic, too long without the key terms, or missing city
+- **Score:** PASS if all service page titles lead with service+city, NEEDS WORK if some titles are weak or missing city, FAIL if titles are generic/brand-only across the board
+- **Evidence:** List each page URL and its title tag with assessment
+
+### Step 3: Check Item #24 — Structured Data Markup
+
+- Fetch the homepage and 1-2 service pages via WebFetch
+- Search the HTML for `<script type="application/ld+json">` blocks
+- Check for:
+  - `LocalBusiness` schema (with correct NAP, hours, geo coordinates)
+  - `Service` schema on service pages
+  - `FAQPage` schema if FAQ sections exist
+  - `Organization` schema
+- Verify schema data matches the GBP listing (name, address, phone, hours)
+- **Score:** PASS if LocalBusiness + Service schema present and matching GBP data, NEEDS WORK if partial schema (e.g., only Organization, or schema has mismatches), FAIL if no structured data at all
+- **Evidence:** Note what schema types are present and any mismatches
+
+### Step 4: Check Item #25 — Mobile-First, Fast, Frictionless UX
+
+**Part A: PageSpeed Insights Test**
+
+1. In the browser, navigate to `https://pagespeed.web.dev/`
+2. Enter the client URL and run the mobile test
+3. Wait for results (15-45 seconds). Use `mcp__claude-in-chrome__computer` with `action: wait`, `duration: 30`. Check if results loaded. If still loading, wait another 15 seconds.
+4. Extract:
+   - Core Web Vitals: LCP, INP, CLS (Pass/Fail)
+   - Lighthouse Performance score
+   - Key metrics: FCP, LCP, TBT, CLS, Speed Index
+
+**SCREENSHOT:** PageSpeed Insights results. Save as `screenshots/pagespeed-mobile.png`.
+
+**Part B: UX Check**
+
+- Fetch the mobile version of the homepage via WebFetch
+- Check for:
+  - Sticky call button or floating CTA
+  - Phone number clickable (tel: link) within one tap
+  - Contact form accessible without excessive scrolling
+  - No intrusive interstitials or popups blocking content
+- **Score:** PASS if CWV passes + one-tap phone/form + sticky CTA, NEEDS WORK if performance is ok but UX elements missing (no sticky CTA, buried phone number), FAIL if poor CWV scores AND bad mobile UX
+- **Evidence:** Note CWV scores, Lighthouse performance, and UX findings
+
+### Step 5: Check Item #26 — Internal Linking Strategy
+
+- Fetch 3-4 key pages (service pages, blog posts) via WebFetch
+- Check:
+  - Do informational pages (blog posts) link to the service pages they support?
+  - Do service pages cross-link to related services?
+  - Are there orphan pages (pages not linked from navigation or other content)?
+  - Is the navigation clean and exposes the most important pages?
+- Check the sitemap page count vs pages reachable from navigation
+- **Score:** PASS if service pages are well cross-linked and blog/info content links to relevant service pages, NEEDS WORK if some linking exists but inconsistent or orphan pages found, FAIL if pages are isolated with minimal internal linking
+- **Evidence:** Note linking patterns found and any orphan pages
+
+### Step 6: Check Item #27 — City/Service-Area Pages
+
+- Check the sitemap for location-specific pages (e.g., /areas/cityname, /service-area/cityname)
+- If they exist, fetch 2-3 via WebFetch and audit:
+  - Is the content unique per city or templated/thin?
+  - Does it include real local details (local jobs done, area-specific info, local reviews)?
+  - Does it have area-specific FAQs?
+  - Does it have a map embed?
+- **Score:** PASS if location pages exist with genuinely unique local content per area, NEEDS WORK if pages exist but are thin/templated with just city name swaps, FAIL if no location pages exist despite serving multiple areas
+- **Note:** If the business only serves one city, this can be N/A (not scored)
+- **Evidence:** List location pages found and content quality assessment
+
+### Step 7: Check Item #28 — Unique, Experience-Based Content
+
+- Review the service pages and any blog content fetched in earlier steps
+- Assess:
+  - Does the content include real pricing or pricing ranges?
+  - Are there project breakdowns or case studies?
+  - Is there opinionated/expert content (comparisons, recommendations)?
+  - Does it feel like it was written by someone who does the work, or is it generic AI-templated content?
+  - Are there real photos of actual work (not stock photos)?
+- **Score:** PASS if content shows clear firsthand experience (pricing, real projects, expert opinions), NEEDS WORK if some unique content but mostly generic descriptions, FAIL if all content is clearly templated/AI-generated with no unique expertise
+- **Evidence:** Note specific examples of experience signals or lack thereof
+
+---
+
+## Phase 5: Compile Checklist Scorecard
+
+Create a scorecard summarizing all 16 items:
+
+### Game Changers
+| # | Item | Status | Key Finding |
+|---|------|--------|-------------|
+| 01 | Visible address vs SAB | PASS/NEEDS WORK/FAIL | ... |
+| 02 | Location within city | PASS/NEEDS WORK/FAIL | ... |
+| 03 | Google Ads / LSAs | PASS/NEEDS WORK/FAIL | ... |
+| 04 | Keywords in business name | PASS/NEEDS WORK/FAIL | ... |
+| 05 | GBP categories | PASS/NEEDS WORK/FAIL | ... |
+| 06 | Strategic press releases | PASS/NEEDS WORK/FAIL | ... |
+| 07 | Dedicated service pages | PASS/NEEDS WORK/FAIL | ... |
+| 08 | Review velocity | PASS/NEEDS WORK/FAIL | ... |
+| 09 | Extended GBP hours | PASS/NEEDS WORK/FAIL | ... |
+
+### Technical & Content
+| # | Item | Status | Key Finding |
+|---|------|--------|-------------|
+| 23 | Title tags | PASS/NEEDS WORK/FAIL | ... |
+| 24 | Structured data | PASS/NEEDS WORK/FAIL | ... |
+| 25 | Mobile-first UX | PASS/NEEDS WORK/FAIL | ... |
+| 26 | Internal linking | PASS/NEEDS WORK/FAIL | ... |
+| 27 | Location pages | PASS/NEEDS WORK/FAIL/N/A | ... |
+| 28 | Content quality | PASS/NEEDS WORK/FAIL | ... |
+| 29 | GBP photos | PASS/NEEDS WORK/FAIL | ... |
+
+Calculate:
+- Total passing: X / 16 (or X / 15 if item 27 is N/A)
+- Game Changers score: X / 9
+- Technical & Content score: X / 7 (or 6)
+
+Generate prioritized recommendations grouped by:
+- **Fix Now** (FAIL items — biggest impact, most urgent)
+- **Improve Soon** (NEEDS WORK items — meaningful gains)
+- **Maintain** (PASS items — keep doing what works)
+
+---
+
+## Phase 6: Generate HTML Report
+
+Create a professional HTML report with a checklist-style layout. The report must include:
+
+1. **Header:** Client business name, domain, audit date, overall score badge (X/16)
+2. **Executive Summary:** Overall score, count of PASS/NEEDS WORK/FAIL items, top 3 most impactful findings
+3. **Section 1: Game Changers** — Each of the 9 items displayed as a card with:
+   - Item number and title
+   - Status badge: green (PASS), amber (NEEDS WORK), red (FAIL)
+   - Evidence summary (what was found)
+   - Recommendation (if not passing)
+   - Relevant screenshot embedded (if applicable)
+4. **Section 2: Technical & Content** — Each of the 7 items in the same card format
+5. **Section 3: Priority Action Plan** — Three groups:
+   - Fix Now (FAIL items with specific action steps)
+   - Improve Soon (NEEDS WORK items with specific action steps)
+   - Maintain (PASS items — brief note on what to keep doing)
+
+### Styling Guidelines
+
+Use a clean, professional design with:
+- Status colors: `#10b981` (green/PASS), `#f59e0b` (amber/NEEDS WORK), `#ef4444` (red/FAIL)
+- Dark navy header with white text
+- Card-based layout for each checklist item
+- Print-friendly CSS
+- Responsive/mobile-friendly
+- Score gauge or progress indicator in the header
+
+Embed ALL screenshots from the `screenshots/` folder at their relevant checklist items with descriptive captions.
 
 Write the report to `LOCAL-SEO-AUDIT-REPORT.html` in the working directory. Open in browser for verification.
 
-## Phase 11: Publish Report to GitHub Pages
+---
+
+## Phase 7: Publish Report to GitHub Pages
 
 Publish the completed report to `https://growtharchon.github.io/client-reports/` so the client can view it online.
 
 ### Step 1: Create a client subfolder name
-Derive a URL-safe folder name from the business name or domain. Examples:
-- `gvgconcrete.com` in Tulare → `gvg-concrete-tulare`
-- `sbmobiledetailing.com` in San Marcos → `smith-bros-mobile-detailing`
-
-Use lowercase, hyphens only, no special characters.
+Derive a URL-safe folder name from the business name or domain. Use lowercase, hyphens only, no special characters.
 
 ### Step 2: Clone the reports repo
 ```bash
@@ -405,35 +441,25 @@ CLIENT_FOLDER="{client-folder-name}"
 mkdir -p "$CLIENT_FOLDER"
 ```
 
-Copy the HTML report as `index.html` (so it loads at the folder URL), the markdown report, and all screenshots:
+Copy the HTML report as `index.html` (so it loads at the folder URL) and all screenshots:
 ```bash
 cp "{working-directory}/LOCAL-SEO-AUDIT-REPORT.html" "$CLIENT_FOLDER/index.html"
-cp "{working-directory}/LOCAL-SEO-AUDIT-REPORT.md" "$CLIENT_FOLDER/" 2>/dev/null
 cp -r "{working-directory}/screenshots" "$CLIENT_FOLDER/" 2>/dev/null
-```
-
-Also copy any client-provided screenshot files from the working directory root:
-```bash
-cp "{working-directory}"/*.png "$CLIENT_FOLDER/" 2>/dev/null
-cp "{working-directory}"/*.jpg "$CLIENT_FOLDER/" 2>/dev/null
 ```
 
 ### Step 4: Commit and push
 ```bash
 git add -A
-git commit -m "Add {business-name} - Local SEO & Google Maps Audit Report
+git commit -m "Add {business-name} - Local SEO Checklist Audit
 
-- Comprehensive local SEO audit with Google Maps, GBP, and technical analysis
-- Competitive benchmarking across local market competitors
-- Citation consistency audit
-- PageSpeed and technical SEO findings
-- Prioritized action plan with 90-day roadmap"
+- 16-point checklist audit: Game Changers + Technical & Content
+- Scorecard with pass/needs-work/fail per item
+- Evidence screenshots and prioritized action plan"
 git push origin main
 ```
 
 ### Step 5: Verify GitHub Pages deployment
 ```bash
-# Check if Pages is enabled with legacy build
 gh api repos/growtharchon/client-reports/pages 2>&1
 ```
 
@@ -462,14 +488,16 @@ https://growtharchon.github.io/client-reports/{client-folder-name}/
 
 Tell the user the URL and confirm it's accessible.
 
+---
+
 ## Output Checklist
 
 Before finishing, verify:
-- [ ] All 11 phases completed
-- [ ] Screenshots captured for: GBP listings, SERP results, schema tests, PageSpeed, competitor GBPs, citation issues
-- [ ] Citation consistency score calculated
-- [ ] Competitor table includes ALL competitors found (primary + local)
-- [ ] HTML report generated with embedded screenshots
-- [ ] Action plan is prioritized with measurable targets
+- [ ] All 7 phases completed
+- [ ] All 16 checklist items scored (PASS / NEEDS WORK / FAIL)
+- [ ] Screenshots captured for: GBP overview, categories, reviews, hours, photos, SERP ads, PageSpeed
+- [ ] HTML report generated with checklist scorecard format
+- [ ] Each item has evidence and recommendation (if not passing)
+- [ ] Action plan prioritized by impact
 - [ ] Report opened in browser for user review
 - [ ] Report published to GitHub Pages and live URL provided to user

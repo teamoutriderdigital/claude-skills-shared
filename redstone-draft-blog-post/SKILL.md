@@ -20,6 +20,7 @@ Before running, verify ALL of the following exist in the working directory. If a
 | `config.json` | Must contain `apiKey` for NeuronWriter API |
 | `Content brain/contentbrain.md` | Client voice, positioning, and terminology guide |
 | `internal_urls.csv` | List of internal site URLs for hub-and-spoke linking |
+| `Content brain/ai-buzzwords.md` | AI buzzword avoidance guide (words and phrases to never use) |
 | `research-report-*.md` | Research report from `/research-for-blog-post` skill |
 
 Use `Glob` to verify these files exist. If no `research-report-*.md` file is found, stop and tell the user to run `/research-for-blog-post` first.
@@ -180,6 +181,20 @@ Parse ALL keywords from `content_basic_w_ranges` into a structured reference. Fo
 
 Also parse `content_extended_w_ranges` for extended keyword targets.
 
+### Step 2.9 -- Read AI Buzzwords Avoidance List
+
+Read `Content brain/ai-buzzwords.md` in full. Internalize ALL categories of words and phrases to avoid:
+- **Universal top offenders** (delve, showcasing, aligns, notably, etc.)
+- **Transition words** (moreover, furthermore, consequently, hence, etc.)
+- **Buzzword adjectives** (crucial, pivotal, transformative, robust, seamless, etc.)
+- **AI-tell verbs** (delve, leverage, utilize, facilitate, foster, navigate, etc.)
+- **Filler phrases and openers** ("In today's fast-paced...", "It's important to note...", etc.)
+- **Abstract nouns** (landscape, tapestry, journey, realm, paradigm, etc.)
+- **Industry-specific AI clusters** (hollow innovation, vague efficiency, corporate solutions language)
+- **Structural red flags** ("It's not about X, it's about Y", uniform sentence length, etc.)
+
+**These words and phrases are BANNED from the content you write.** If you catch yourself reaching for any of them, replace with specific, concrete language relevant to the actual manufacturing process, material, or service being described.
+
 ---
 
 ## Phase 3: Content Brief Creation
@@ -332,6 +347,7 @@ Never use ChatGPT slop phrases:
 - **Burstiness:** Mix short punchy sentences (8-12 words) with medium ones (15-25 words). Rarely exceed 35 words. Vary paragraph lengths.
 - **Varied sentence openers:** Never start three or more sentences in a row with the same word or pattern. Restructure to lead with the benefit, the process, the material, or the outcome.
 - **No robotic phrasing:** No overly formal constructions, unnecessary hedging, or AI filler. If a phrase sounds like it could appear in any AI-generated article on any topic, replace it with something specific to the actual manufacturing process being described.
+- **Full buzzword avoidance list:** Refer to `Content brain/ai-buzzwords.md` (read in Step 2.9). Any word or phrase listed there is banned from the content.
 
 ### Rule 10: Semantic Triple Structure in Key Positions
 
@@ -506,6 +522,108 @@ else:
 
 ---
 
+## Phase 6.5: AI Buzzword Compliance Check
+
+**This phase is mandatory. Run it after keyword and terminology compliance passes and before output.**
+
+Scan the content in `{keyword}-blog-draft.md` against the buzzword categories from `Content brain/ai-buzzwords.md`. Run this Python script via Bash:
+
+```python
+import re
+
+with open('{keyword}-blog-draft.md', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+# Buzzword lists from ai-buzzwords.md
+ai_words = [
+    'delve', 'leverage', 'utilize', 'facilitate', 'foster', 'harness',
+    'navigate', 'underscore', 'endeavor', 'augment', 'elevate', 'empower',
+    'propel', 'catalyze', 'galvanize', 'streamline', 'unleash', 'turbocharge',
+    'robust', 'seamless', 'cutting-edge', 'state-of-the-art', 'pivotal',
+    'transformative', 'groundbreaking', 'revolutionary', 'unprecedented',
+    'profound', 'invaluable', 'paramount', 'stellar', 'comprehensive',
+    'innovative', 'tapestry', 'paradigm', 'synergy', 'ecosystem',
+    'cornerstone', 'catalyst', 'arsenal', 'methodology', 'showcasing',
+]
+
+ai_phrases = [
+    "in today's fast-paced",
+    'in the ever-evolving',
+    "it's important to note",
+    "it's worth mentioning",
+    'in the realm of',
+    "let's dive into",
+    "let's explore",
+    'unlock the power of',
+    'in an ever-evolving landscape',
+    'as we navigate',
+    'plays a vital role',
+    'plays a crucial role',
+    'plays a significant role',
+    'serves as a testament',
+    'as we delve deeper',
+    'welcome to the world of',
+    'in conclusion',
+    'in summary',
+    'a wide range of',
+    'designed to meet your needs',
+    'when it comes to',
+    'this allows for',
+    'in the digital age',
+    "it's not about",
+    'moreover',
+    'furthermore',
+    'consequently',
+    'hence',
+    'notably',
+    'nevertheless',
+    'nonetheless',
+    'notwithstanding',
+    'revolutionize',
+    'redefining what',
+    'a new era of',
+    'drive operational excellence',
+    'digital transformation journey',
+    'mission-critical',
+    'next-generation',
+    'game-changer',
+    'unprecedented precision',
+]
+
+text_lower = text.lower()
+found = []
+
+for word in ai_words:
+    matches = re.findall(r'\b' + re.escape(word) + r'\b', text_lower)
+    if matches:
+        found.append((word, len(matches), 'WORD'))
+
+for phrase in ai_phrases:
+    matches = re.findall(re.escape(phrase), text_lower)
+    if matches:
+        found.append((phrase, len(matches), 'PHRASE'))
+
+if found:
+    print(f'=== {len(found)} AI BUZZWORD VIOLATIONS FOUND ===')
+    print(f'{"Type":<8} {"Count":>5}  Term')
+    print('-' * 60)
+    for term, count, typ in sorted(found, key=lambda x: -x[1]):
+        print(f'{typ:<8} {count:>5}  {term}')
+else:
+    print('No AI buzzword violations found!')
+```
+
+### Buzzword Compliance Rules
+
+1. **If no violations found:** Proceed to Phase 7 (Output & Upload).
+2. **If violations found:** Fix them using targeted `Edit` calls:
+   - Replace each flagged word/phrase with specific, concrete language
+   - Do NOT replace with another word from the buzzword list
+   - After edits, re-run the buzzword scan AND the keyword compliance check (fixes must not break keyword ranges)
+3. **Repeat up to 2 passes.** If violations remain after 2 passes, show them to the user.
+
+---
+
 ## Phase 7: Output & Upload
 
 ### Step 7.1 -- Generate SEO Metadata Block
@@ -674,3 +792,4 @@ Print a summary:
 11. **No ChatGPT slop.** No filler phrases, no empty superlatives, no generic conclusions. Every sentence must carry information.
 12. **Dual audience rule.** Every blog post must serve both engineers (technical specifics, tolerances, material properties) and procurement managers (cost, lead times, risk mitigation, supplier credibility). If the article leans too heavily toward one audience, rebalance.
 13. **Semantic triples are a writing technique, not a compliance metric.** Use Entity + Relationship + Value structure in section openers, the opening paragraph, meta descriptions, and FAQ answers. Never override keyword compliance, word count, or Content Brain rules for triple structure.
+14. **AI buzzwords are banned.** Every word, phrase, and structural pattern listed in `Content brain/ai-buzzwords.md` must be avoided. The buzzword compliance check in Phase 6.5 catches violations, but aim to avoid them during writing.
