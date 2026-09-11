@@ -15,6 +15,7 @@ Shared Claude Code skills for the team.
 | `/create-service-page-b2b` | End-to-end B2B service page content creation from scratch. Fetches NeuronWriter requirements and Google SERP/PAA, calculates target word count from top competitors, analyzes a template page for structure, then creates new content following Content Brain rules, keyword compliance, and SEO best practices. Uploads to NeuronWriter when complete. |
 | `/fetch-internal-urls` | Crawl a website's XML sitemap and extract all real page and post URLs, filtering out tags, categories, images, media, feeds, pagination, and other non-content URLs. Saves results as a plain-text CSV (one URL per line). |
 | `/ha-draft-article` | End-to-end HostAdvice blog article drafting pipeline. Reads article parameters from Content Management.csv, uses a research report as input, creates a structured content brief, gathers internal links and People Also Ask questions, then writes a full SEO-optimized article matching the HostAdvice writing style. Updates the CSV with the output file path and word count. |
+| `/ha-seo-titles` | End-to-end SEO title generation pipeline for HostAdvice articles. Reads keywords from kws.csv, fetches top 10 Google SERP results via DataForSEO, analyzes competitor titles, then crafts 3 optimized SEO title proposals per keyword following strict SOP rules (60 char max, parentheses for CTR, keyword inclusion). Validates and saves results to seo_titles.csv. |
 | `/local-biz-mockup` | End-to-end local business mockup website generator. Researches the business, gathers images and brand assets from public sources, designs a color schema, codes a responsive Astro + Tailwind 4 site, runs visual QA testing, and deploys to Vercel via GitHub. |
 | `/local-seo-audit` | Comprehensive local SEO and Google Maps audit with HTML report. |
 | `/local-site-content-plan` | End-to-end local business content plan generator. Reads services and locations from Content Brain and onboarding docs, builds a service x location page matrix with Near Me pages, fetches keyword volumes from SEMrush, crafts SEO titles, fetches People Also Ask questions from Google SERP via DataForSEO, filters for customer-intent blog topics, and produces a CSV + visual HTML dashboard. |
@@ -45,6 +46,7 @@ ln -s ~/.claude/skills-shared/create-content-brain ~/.claude/skills/create-conte
 ln -s ~/.claude/skills-shared/create-service-page-b2b ~/.claude/skills/create-service-page-b2b
 ln -s ~/.claude/skills-shared/fetch-internal-urls ~/.claude/skills/fetch-internal-urls
 ln -s ~/.claude/skills-shared/ha-draft-article ~/.claude/skills/ha-draft-article
+ln -s ~/.claude/skills-shared/ha-seo-titles ~/.claude/skills/ha-seo-titles
 ln -s ~/.claude/skills-shared/local-biz-mockup ~/.claude/skills/local-biz-mockup
 ln -s ~/.claude/skills-shared/local-seo-audit ~/.claude/skills/local-seo-audit
 ln -s ~/.claude/skills-shared/local-site-content-plan ~/.claude/skills/local-site-content-plan
@@ -74,6 +76,7 @@ New-Item -ItemType Junction -Path "$dst\create-content-brain"       -Target "$sr
 New-Item -ItemType Junction -Path "$dst\create-service-page-b2b"    -Target "$src\create-service-page-b2b"
 New-Item -ItemType Junction -Path "$dst\fetch-internal-urls"        -Target "$src\fetch-internal-urls"
 New-Item -ItemType Junction -Path "$dst\ha-draft-article"           -Target "$src\ha-draft-article"
+New-Item -ItemType Junction -Path "$dst\ha-seo-titles"             -Target "$src\ha-seo-titles"
 New-Item -ItemType Junction -Path "$dst\local-biz-mockup"           -Target "$src\local-biz-mockup"
 New-Item -ItemType Junction -Path "$dst\local-seo-audit"            -Target "$src\local-seo-audit"
 New-Item -ItemType Junction -Path "$dst\local-site-content-plan"    -Target "$src\local-site-content-plan"
